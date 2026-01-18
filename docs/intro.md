@@ -1,47 +1,114 @@
 ---
 sidebar_position: 1
+slug: /intro
+title: Welcome to DataHub
+description: Get started with DataHub - the leading open-source metadata platform for the modern data stack
+keywords: [datahub, metadata, data catalog, data governance, data discovery]
 ---
 
-# Tutorial Intro
+# Welcome to DataHub
 
-Let's discover **Docusaurus in less than 5 minutes**.
+**DataHub** is the leading open-source metadata platform built for the modern data stack. It enables organizations to discover, observe, and govern their entire data ecosystem from a single, unified platform.
 
-## Getting Started
+## What is DataHub?
 
-Get started by **creating a new site**.
+DataHub provides a comprehensive solution for:
 
-Or **try Docusaurus immediately** with **[docusaurus.new](https://docusaurus.new)**.
+- 🔍 **Data Discovery** - Find any dataset, dashboard, pipeline, or ML model in seconds
+- 🌐 **End-to-End Lineage** - Visualize column-level data flows across your organization  
+- ✨ **Data Quality** - Monitor and ensure the health of your data assets
+- 🔐 **Data Governance** - Implement fine-grained access control and compliance policies
+- 📊 **Data Observability** - Track schema changes, freshness, and pipeline health
 
-### What you'll need
+## Why Choose DataHub?
 
-- [Node.js](https://nodejs.org/en/download/) version 20.0 or above:
-  - When installing Node.js, you are recommended to check all checkboxes related to dependencies.
+| Feature | Description |
+|---------|-------------|
+| **100+ Integrations** | Connect to Snowflake, Databricks, dbt, Kafka, Airflow, and more |
+| **Extensible Architecture** | Customize entities, relationships, and aspects via GraphQL API |
+| **Real-time Ingestion** | Stream metadata changes with sub-second latency |
+| **Enterprise Ready** | SSO, RBAC, audit logs, and SOC2 compliance |
+| **Active Community** | 10K+ GitHub stars and 500+ contributors |
 
-## Generate a new site
+## Quick Start
 
-Generate a new Docusaurus site using the **classic template**.
-
-The classic template will automatically be added to your project after you run the command:
-
-```bash
-npm init docusaurus@latest my-website classic
-```
-
-You can type this command into Command Prompt, Powershell, Terminal, or any other integrated terminal of your code editor.
-
-The command also installs all necessary dependencies you need to run Docusaurus.
-
-## Start your site
-
-Run the development server:
+Get DataHub running in minutes with Docker:
 
 ```bash
-cd my-website
-npm run start
+# Clone the repository
+git clone https://github.com/datahub-project/datahub.git
+
+# Start DataHub using Docker Compose
+cd datahub/docker/quickstart
+./quickstart.sh
 ```
 
-The `cd` command changes the directory you're working with. In order to work with your newly created Docusaurus site, you'll need to navigate the terminal there.
+Once started, access the DataHub UI at [http://localhost:9002](http://localhost:9002).
 
-The `npm run start` command builds your website locally and serves it through a development server, ready for you to view at http://localhost:3000/.
+:::tip First Time Here?
+Check out our [Getting Started Guide](/docs/category/tutorial-basics) for a comprehensive walkthrough of DataHub's core features.
+:::
 
-Open `docs/intro.md` (this page) and edit some lines: the site **reloads automatically** and displays your changes.
+## Architecture Overview
+
+DataHub is built on a flexible, event-driven architecture:
+
+```mermaid
+graph TD
+    Sources["<b>Data Sources</b><br/>Snowflake, Databricks, dbt"] 
+    --> Ingestion["<b>Ingestion Framework</b><br/>Python SDK"]
+    --> GMS["<b>DataHub Metadata Service</b><br/>Back-end GMS"]
+
+    GMS --> Search["<b>Search & Discovery</b>"]
+    GMS --> API["<b>GraphQL API & UI</b>"]
+    GMS --> Events["<b>Events & Actions</b>"]
+
+    style Sources fill:#e3f2fd,stroke:#1565c0,stroke-width:2px
+    style Ingestion fill:#fff3e0,stroke:#ef6c00,stroke-width:2px
+    style GMS fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    style Search fill:#f1f8e9,stroke:#558b2f
+    style API fill:#f1f8e9,stroke:#558b2f
+    style Events fill:#f1f8e9,stroke:#558b2f
+```
+
+## Next Steps
+
+<div className="row">
+  <div className="col col--6">
+    <div className="card margin-bottom--lg">
+      <div className="card__header">
+        <h3>📚 Learn the Basics</h3>
+      </div>
+      <div className="card__body">
+        <p>Understand DataHub's core concepts including entities, aspects, and the metadata model.</p>
+      </div>
+      <div className="card__footer">
+        <a className="button button--primary button--block" href="/docs/tutorial-basics/quick-installation">Core Concepts</a>
+      </div>
+    </div>
+  </div>
+  <div className="col col--6">
+    <div className="card margin-bottom--lg">
+      <div className="card__header">
+        <h3>🔧 Set Up Ingestion</h3>
+      </div>
+      <div className="card__body">
+        <p>Connect your data sources and start ingesting metadata automatically.</p>
+      </div>
+      <div className="card__footer">
+        <a className="button button--primary button--block" href="/docs/tutorial-basics/ingestion-quickstart">Ingestion Guide</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+## Join the Community
+
+- 💬 [Slack Community](https://slack.datahubproject.io) - Get help and discuss with the community
+- 🐙 [GitHub Repository](https://github.com/datahub-project/datahub) - Report issues and contribute
+- 📝 [Blog](https://blog.datahubproject.io) - Read about the latest features and best practices
+- 🐦 [Twitter](https://twitter.com/databorating) - Follow for updates
+
+---
+
+Built with ❤️ by the DataHub community
