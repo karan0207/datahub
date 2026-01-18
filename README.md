@@ -1,74 +1,53 @@
-# 📊 DataHub Docs
+# DataHub Documentation
 
-A world-class, premium documentation site for DataHub, built with **Docusaurus 3.9.2**. This project serves as a comprehensive hub for tutorials, architecture guides, and platform documentation with a modern, high-conversion aesthetic.
+This repository contains the official documentation for DataHub, a modern data catalog built for teams to discover, understand, and trust their data.
 
-Made with ❤️ by **Karan** for the Open Source and Docusaurus community.
+The documentation is built with Docusaurus and deployed at [datahub-docs-url].
 
-![DataHub Social Card](static/img/docusaurus-social-card.jpg)
+## What You'll Find Here
 
-## ✨ Features
+- **Getting Started** - Quickstart guides and installation instructions
+- **Architecture** - Deep dives into DataHub's design and components
+- **User Guides** - Practical tutorials for data discovery, governance, and lineage
+- **API Reference** - Technical documentation for developers
+- **Best Practices** - Patterns and recommendations from the community
 
-- **🚀 Premium UI/UX**: Custom "Noir Lux" theme with glassmorphism, animated backgrounds, and aurora orbs.
-- **📖 Comprehensive Guides**: In-depth tutorials covering Data Lineage, Governance, Discovery, and more.
-- **🧩 Interactive Elements**: Built-in support for Mermaid.js diagrams and MDX components.
-- **📱 Fully Responsive**: Optimized for desktop, tablet, and mobile viewing.
-- **🔍 Power Search**: Integrated search discovery for lightning-fast navigation.
-- **📝 Tech Blog**: Integrated blogging system for the latest data engineering insights.
-
-## 🛠️ Technology Stack
-
-- **Framework**: [Docusaurus 3](https://docusaurus.io/)
-- **Core**: React 19, MDX, CSS Modules
-- **Diagrams**: Mermaid.js
-- **Styling**: Vanilla CSS (Custom Premium Theme)
-
-## 🏁 Getting Started
+## Getting Started
 
 ### Prerequisites
 
-- [Node.js](https://nodejs.org/) (version 20 or higher)
-- [npm](https://www.npmjs.com/)
+- Node.js 20 or higher
+- npm
 
-### Installation
+### Running Locally
 
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/karan0207/datahub.git
-   cd datahub-docs
-   ```
+```bash
+cd datahub-docs
+npm install
+npm start
+```
 
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
+The documentation site will be available at `http://localhost:3000`.
 
-3. Start the development server:
-   ```bash
-   npm start
-   ```
-
-The site will be available at `http://localhost:3000`.
-
-## 🏗️ Deployment
-
-To build the project for production:
+### Building for Production
 
 ```bash
 npm run build
 ```
 
-This will generate a `build` directory containing static files ready for hosting on GitHub Pages, Vercel, or Netlify.
+The static files will be generated in the `build` directory, ready for deployment.
 
-## 🤝 Contributing
+## Contributing
 
-This project is open-source! Feel free to:
-- Open issues for bugs or feature requests.
-- Submit Pull Requests to improve documentation or theme aesthetics.
+Contributions are welcome! Whether you want to fix a typo, clarify an explanation, or add a new guide:
 
-## 📜 License
+1. Fork the repository
+2. Create a feature branch (`git checkout -b docs/your-improvement`)
+3. Make your changes
+4. Submit a pull request
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+Please see [CONTRIBUTING.md](docs/contributing.md) for detailed guidelines.
 
----
+## License
 
-*Built by [Karan](https://github.com/karan0207) for the DataHub Community @ 2026*
+MIT License - see the [LICENSE](LICENSE) file for details.
