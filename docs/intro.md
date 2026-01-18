@@ -46,7 +46,7 @@ cd datahub/docker/quickstart
 Once started, access the DataHub UI at [http://localhost:9002](http://localhost:9002).
 
 :::tip First Time Here?
-Check out our [Getting Started Guide](/docs/category/tutorial-basics) for a comprehensive walkthrough of DataHub's core features.
+Check out our [Getting Started Guide](/docs/tutorial-basics/quick-installation) for a comprehensive walkthrough of DataHub's core features.
 :::
 
 ## Architecture Overview

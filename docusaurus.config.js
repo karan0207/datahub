@@ -133,12 +133,12 @@ const config = {
                 to: '/docs/intro',
               },
               {
-                label: 'Tutorial Basics',
-                to: '/docs/category/tutorial-basics',
+                label: 'Getting Started',
+                to: '/docs/tutorial-basics/quick-installation',
               },
               {
-                label: 'Tutorial Extras',
-                to: '/docs/category/tutorial-extras',
+                label: 'Advanced Guides',
+                to: '/docs/tutorial-extras/production-deployment',
               },
             ],
           },
