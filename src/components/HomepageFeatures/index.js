@@ -4,47 +4,128 @@ import styles from './styles.module.css';
 
 const FeatureList = [
   {
-    title: 'Easy to Use',
-    Svg: require('@site/static/img/undraw_docusaurus_mountain.svg').default,
+    title: 'Unified Metadata Platform',
+    icon: '🔍',
+    gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
     description: (
       <>
-        Docusaurus was designed from the ground up to be easily installed and
-        used to get your website up and running quickly.
+        Centralize metadata from your entire data ecosystem. Connect to 100+ data sources 
+        including Snowflake, Databricks, dbt, Kafka, and more with automated ingestion.
       </>
     ),
   },
   {
-    title: 'Focus on What Matters',
-    Svg: require('@site/static/img/undraw_docusaurus_tree.svg').default,
+    title: 'End-to-End Lineage',
+    icon: '🌐',
+    gradient: 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)',
     description: (
       <>
-        Docusaurus lets you focus on your docs, and we&apos;ll do the chores. Go
-        ahead and move your docs into the <code>docs</code> directory.
+        Visualize how data flows across your organization with column-level lineage. 
+        Understand upstream dependencies and downstream impact with a beautiful graph UI.
       </>
     ),
   },
   {
-    title: 'Powered by React',
-    Svg: require('@site/static/img/undraw_docusaurus_react.svg').default,
+    title: 'Data Quality & Observability',
+    icon: '✨',
+    gradient: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
     description: (
       <>
-        Extend or customize your website layout by reusing React. Docusaurus can
-        be extended while reusing the same header and footer.
+        Monitor data health with built-in quality checks and alerts. Get notified 
+        when schemas change, pipelines fail, or data quality degrades.
+      </>
+    ),
+  },
+  {
+    title: 'Powerful Search & Discovery',
+    icon: '⚡',
+    gradient: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+    description: (
+      <>
+        Find any dataset, dashboard, or pipeline in seconds with intelligent search. 
+        Leverage AI-powered recommendations and auto-complete suggestions.
+      </>
+    ),
+  },
+  {
+    title: 'Fine-Grained Access Control',
+    icon: '🔐',
+    gradient: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
+    description: (
+      <>
+        Implement robust data governance with role-based access control and data 
+        policies. Ensure compliance with automated tagging and classification.
+      </>
+    ),
+  },
+  {
+    title: 'Extensible Architecture',
+    icon: '🧩',
+    gradient: 'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)',
+    description: (
+      <>
+        Built on a flexible metadata model that adapts to your needs. Create custom 
+        entities, relationships, and aspects with our powerful GraphQL API.
       </>
     ),
   },
 ];
 
-function Feature({Svg, title, description}) {
+function Feature({title, icon, gradient, description}) {
   return (
-    <div className={clsx('col col--4')}>
-      <div className="text--center">
-        <Svg className={styles.featureSvg} role="img" />
+    <div className={styles.featureCard}>
+      <div className={styles.featureIconWrapper} style={{ background: gradient }}>
+        <span className={styles.featureIcon}>{icon}</span>
       </div>
-      <div className="text--center padding-horiz--md">
-        <Heading as="h3">{title}</Heading>
-        <p>{description}</p>
+      <div className={styles.featureContent}>
+        <Heading as="h3" className={styles.featureTitle}>{title}</Heading>
+        <p className={styles.featureDescription}>{description}</p>
       </div>
+      <div className={styles.featureGlow} style={{ background: gradient }}></div>
+    </div>
+  );
+}
+
+function SectionHeader() {
+  return (
+    <div className={styles.sectionHeader}>
+      <span className={styles.sectionBadge}>Features</span>
+      <Heading as="h2" className={styles.sectionTitle}>
+        Everything you need for 
+        <span className={styles.gradientText}> modern data governance</span>
+      </Heading>
+      <p className={styles.sectionSubtitle}>
+        DataHub provides a complete platform for metadata management, data discovery, 
+        and governance. Built for scale, designed for simplicity.
+      </p>
+    </div>
+  );
+}
+
+function CTASection() {
+  return (
+    <div className={styles.ctaSection}>
+      <div className={styles.ctaContent}>
+        <Heading as="h2" className={styles.ctaTitle}>
+          Ready to transform your data experience?
+        </Heading>
+        <p className={styles.ctaSubtitle}>
+          Join thousands of data teams using DataHub to discover, 
+          understand, and trust their data.
+        </p>
+        <div className={styles.ctaButtons}>
+          <a href="/docs/intro" className={styles.ctaPrimary}>
+            <span>Start Building</span>
+            <svg className={styles.ctaIcon} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+            </svg>
+          </a>
+          <a href="https://demo.datahubproject.io" className={styles.ctaSecondary} target="_blank" rel="noopener noreferrer">
+            <span>Try Live Demo</span>
+          </a>
+        </div>
+      </div>
+      <div className={styles.ctaGlow}></div>
     </div>
   );
 }
@@ -53,11 +134,13 @@ export default function HomepageFeatures() {
   return (
     <section className={styles.features}>
       <div className="container">
-        <div className="row">
+        <SectionHeader />
+        <div className={styles.featureGrid}>
           {FeatureList.map((props, idx) => (
             <Feature key={idx} {...props} />
           ))}
         </div>
+        <CTASection />
       </div>
     </section>
   );
