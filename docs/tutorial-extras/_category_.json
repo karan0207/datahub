@@ -1,7 +1,8 @@
 {
-  "label": "Tutorial - Extras",
+  "label": "📚 Advanced Guides",
   "position": 3,
   "link": {
-    "type": "generated-index"
+    "type": "generated-index",
+    "description": "Deep dive into advanced DataHub features and configurations."
   }
 }
