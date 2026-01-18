@@ -1,19 +1,34 @@
-facebook:
-  label: Facebook
-  permalink: /facebook
-  description: Facebook tag description
+data-discovery:
+  label: Data Discovery
+  description: Finding and understanding your data assets
+  permalink: /data-discovery
 
-hello:
-  label: Hello
-  permalink: /hello
-  description: Hello tag description
+data-governance:
+  label: Data Governance
+  description: Policies, compliance, and access control
+  permalink: /data-governance
 
-docusaurus:
-  label: Docusaurus
-  permalink: /docusaurus
-  description: Docusaurus tag description
+data-quality:
+  label: Data Quality
+  description: Ensuring your data is accurate and reliable
+  permalink: /data-quality
 
-hola:
-  label: Hola
-  permalink: /hola
-  description: Hola tag description
+data-lineage:
+  label: Data Lineage
+  description: Understanding data flow and dependencies
+  permalink: /data-lineage
+
+best-practices:
+  label: Best Practices
+  description: Tips and strategies for data management
+  permalink: /best-practices
+
+engineering:
+  label: Engineering
+  description: Technical deep dives and architecture
+  permalink: /engineering
+
+announcements:
+  label: Announcements
+  description: Product news and updates
+  permalink: /announcements
