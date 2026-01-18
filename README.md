@@ -4,6 +4,8 @@ This repository contains the official documentation for DataHub, a modern data c
 
 The documentation is built with Docusaurus and deployed at https://datahub-docs-site.vercel.app.
 
+![DataHub Documentation](img/hero.png)
+
 ## What You'll Find Here
 
 - **Getting Started** - Quickstart guides and installation instructions
