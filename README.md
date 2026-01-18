@@ -2,7 +2,7 @@
 
 This repository contains the official documentation for DataHub, a modern data catalog built for teams to discover, understand, and trust their data.
 
-The documentation is built with Docusaurus and deployed at [datahub-docs-url].
+The documentation is built with Docusaurus and deployed at https://datahub-docs-site.vercel.app.
 
 ## What You'll Find Here
 
