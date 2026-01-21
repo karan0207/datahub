@@ -4,14 +4,11 @@ title: Your First Data Ingestion
 description: Connect your data sources and watch DataHub automatically discover your metadata
 ---
 
-# Your First Data Ingestion 📥
+# Your First Data Ingestion
 
-*"Where does my data come from?"* — DataHub helps you answer this by centralizing metadata. Let's connect your first data source to begin populating your catalog.
+Ingestion is how you get metadata into DataHub. It reads your database schemas, table names, columns, and relationships - but never touches your actual data.
 
-## Understanding Ingestion
-
-Before we dive in, let's clarify what "ingestion" means in DataHub:
-
+## How ingestion works
 ```mermaid
 graph LR
     A[<b>Your Data Sources</b><br/><br/>❄️ Snowflake<br/>🐘 PostgreSQL<br/>🏗️ dbt<br/>📡 Kafka] 
@@ -23,40 +20,34 @@ graph LR
     style C fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px,color:#000
 ```
 
-**Key insight:** DataHub only reads *metadata* — it never touches your actual data. Think of it as reading the table of contents of a book, not the book itself.
+DataHub reads metadata like table names and column types. It doesn't read or copy your actual data.
 
-## Choose Your Adventure
+## Pick your source
 
-DataHub supports **100+ integrations**. Pick the one that matches your setup:
+DataHub supports 100+ integrations. Here are the most common ones:
 
-### 🐘 PostgreSQL
+### PostgreSQL
 
-Perfect for getting started. If you have any PostgreSQL database lying around, this is the quickest way to see DataHub in action.
+Quick way to test if you have a Postgres database lying around.
 
 <details>
-<summary><strong>📋 PostgreSQL Ingestion Guide</strong></summary>
-
-#### Step 1: Create a Recipe File
+<summary><strong>PostgreSQL setup</strong></summary>
 
 Create a file called `postgres_recipe.yml`:
-
 ```yaml
 source:
   type: postgres
   config:
-    # Connection info
     host_port: localhost:5432
     database: your_database_name
     username: your_username
     password: your_password
     
-    # What to include (optional - defaults to everything)
     schema_pattern:
       allow:
         - "public"
         - "analytics"
     
-    # Enable profiling for rich statistics (optional)
     profiling:
       enabled: true
 
@@ -66,42 +57,33 @@ sink:
     server: http://localhost:8080
 ```
 
-#### Step 2: Run the Ingestion
-
+Run it:
 ```bash
 datahub ingest -c postgres_recipe.yml
 ```
 
-#### Step 3: See Your Data
-
-Open DataHub UI at `localhost:9002` and search for your tables!
+Open DataHub at `localhost:9002` and search for your tables.
 
 </details>
 
 ---
 
-### ❄️ Snowflake
+### Snowflake
 
-The most popular cloud data warehouse. Here's how to connect it.
+Most popular cloud warehouse.
 
 <details>
-<summary><strong>📋 Snowflake Ingestion Guide</strong></summary>
+<summary><strong>Snowflake setup</strong></summary>
 
-#### Step 1: Create a Service Account (Recommended)
-
-In Snowflake, run these commands:
-
+Create a service account in Snowflake:
 ```sql
--- Create a dedicated role for DataHub
 CREATE ROLE datahub_role;
 
--- Grant necessary permissions
 GRANT USAGE ON WAREHOUSE your_warehouse TO ROLE datahub_role;
 GRANT USAGE ON DATABASE your_database TO ROLE datahub_role;
 GRANT USAGE ON ALL SCHEMAS IN DATABASE your_database TO ROLE datahub_role;
 GRANT SELECT ON ALL TABLES IN DATABASE your_database TO ROLE datahub_role;
 
--- Create a service account user
 CREATE USER datahub_user 
   PASSWORD = 'your_secure_password'
   DEFAULT_ROLE = datahub_role
@@ -110,29 +92,22 @@ CREATE USER datahub_user
 GRANT ROLE datahub_role TO USER datahub_user;
 ```
 
-#### Step 2: Create a Recipe File
-
 Create `snowflake_recipe.yml`:
-
 ```yaml
 source:
   type: snowflake
   config:
-    account_id: "your-account.region"  # e.g., "abc123.us-east-1"
+    account_id: "your-account.region"
     username: datahub_user
     password: your_secure_password
     warehouse: your_warehouse
     
-    # Control what gets ingested
     database_pattern:
       allow:
         - "PROD_DB"
         - "ANALYTICS"
     
-    # Include usage statistics (who queries what)
     include_usage_stats: true
-    
-    # Enable column-level lineage
     include_column_lineage: true
 
 sink:
@@ -141,39 +116,32 @@ sink:
     server: http://localhost:8080
 ```
 
-#### Step 3: Run It
-
+Run it:
 ```bash
 datahub ingest -c snowflake_recipe.yml
 ```
 
-:::tip Pro Tip
-For Snowflake, enable `include_usage_stats` to see which tables are most queried. This helps identify your organization's most important data assets.
-:::
+Enable `include_usage_stats` to see which tables get queried the most. Helps identify what's actually important.
 
 </details>
 
 ---
 
-### 🏗️ dbt
+### dbt
 
-If you use dbt, this is where DataHub really shines. It captures your transformations, tests, and documentation.
+If you use dbt, this is where DataHub gets really useful. It captures your transformations, tests, and documentation.
 
 <details>
-<summary><strong>📋 dbt Ingestion Guide</strong></summary>
+<summary><strong>dbt setup</strong></summary>
 
-#### What You'll Get
+What you get:
+- All your dbt models as datasets
+- Automatic lineage between models  
+- Your dbt descriptions
+- Test results
+- Column-level lineage
 
-- ✅ All your dbt models as datasets
-- ✅ Automatic lineage between models  
-- ✅ Your dbt descriptions and documentation
-- ✅ Test results and data quality metrics
-- ✅ Column-level lineage
-
-#### Step 1: Generate dbt Artifacts
-
-Make sure you have recent artifacts:
-
+Generate dbt artifacts:
 ```bash
 cd your-dbt-project
 dbt docs generate
@@ -181,10 +149,7 @@ dbt docs generate
 
 This creates `manifest.json` and `catalog.json` in your `target/` folder.
 
-#### Step 2: Create a Recipe File
-
 Create `dbt_recipe.yml`:
-
 ```yaml
 source:
   type: dbt
@@ -192,10 +157,8 @@ source:
     manifest_path: "/path/to/dbt/project/target/manifest.json"
     catalog_path: "/path/to/dbt/project/target/catalog.json"
     
-    # Your dbt target platform (where models are materialized)
-    target_platform: snowflake  # or bigquery, redshift, etc.
+    target_platform: snowflake
     
-    # Include column-level lineage
     enable_meta_mapping: true
 
 sink:
@@ -204,87 +167,53 @@ sink:
     server: http://localhost:8080
 ```
 
-#### Step 3: Run the Ingestion
-
+Run it:
 ```bash
 datahub ingest -c dbt_recipe.yml
 ```
 
-:::info Best Practice
-Run dbt ingestion **after** ingesting your warehouse (Snowflake/BigQuery/etc). This way, dbt metadata enriches the existing datasets rather than creating duplicates.
-:::
+Run dbt ingestion after ingesting your warehouse (Snowflake/BigQuery/etc). That way dbt metadata enriches existing datasets instead of creating duplicates.
 
 </details>
 
 ---
 
-## UI-Based Ingestion 🖱️
+## UI-based ingestion
 
-Prefer clicking over typing? DataHub has a beautiful UI for setting up ingestion.
+Prefer clicking? Use the UI instead.
 
-### Step 1: Navigate to Ingestion
+1. Click Settings → Ingestion
+2. Click "+ Create new source"
+3. Select your platform (Snowflake, PostgreSQL, etc)
+4. Enter connection details
+5. Configure what to ingest
+6. Set a schedule or run manually
+7. Click Execute
 
-Click **⚙️ Settings** → **Ingestion** in the top navigation.
+You'll see progress in real-time with any warnings or errors.
 
-### Step 2: Create a New Source
+## Verify it worked
 
-Click the **+ Create new source** button.
+After ingestion completes:
 
-### Step 3: Fill in the Details
+**Search for your data**: Type a table name you know exists in the search bar. Should show up with metadata.
 
-1. **Select your platform** (e.g., Snowflake, PostgreSQL)
-2. **Enter connection details** (the UI will guide you)
-3. **Configure what to ingest** (databases, schemas)
-4. **Set a schedule** (or run manually)
+**Check lineage**: Click any dataset → Lineage tab. You should see upstream and downstream connections.
 
-### Step 4: Run & Monitor
+**Look at the schema**: Schema tab shows all columns, types, and descriptions.
 
-Click **Execute** and watch the progress bar. You'll see:
-- ✅ Assets discovered
-- ⚠️ Warnings (if any)
-- ❌ Errors (with helpful messages)
+## Schedule recurring ingestion
 
----
+You probably don't want to run this manually every day.
 
-## Verifying Your Ingestion
+### Built-in scheduler
 
-After ingestion completes, let's make sure everything worked:
+In the UI when creating a source, set a schedule:
+- Hourly - for frequently changing schemas
+- Daily - for most cases
+- Weekly - for stable sources
 
-### 1. Search for Your Data
-
-Go to the search bar and type the name of a table you know exists:
-
-```
-customer_orders
-```
-
-You should see it appear in results with rich metadata!
-
-### 2. Check the Lineage
-
-Click on any dataset and navigate to the **Lineage** tab. You should see upstream and downstream connections.
-
-### 3. Explore the Schema
-
-The **Schema** tab shows all columns, their types, and any descriptions that were ingested.
-
----
-
-## Scheduling Recurring Ingestion
-
-You probably don't want to manually run ingestion every day. Here's how to automate it:
-
-### Option 1: Built-in Scheduler (Recommended)
-
-In the UI, when creating an ingestion source, set a schedule:
-- **Hourly** — For frequently changing schemas
-- **Daily** — For most production use cases
-- **Weekly** — For stable, rarely-changing sources
-
-### Option 2: External Scheduler (Airflow, etc.)
-
-Create an Airflow DAG:
-
+### External scheduler (Airflow)
 ```python
 from airflow import DAG
 from airflow.operators.bash import BashOperator
@@ -314,52 +243,34 @@ with DAG(
         bash_command='datahub ingest -c /path/to/dbt_recipe.yml',
     )
     
-    # Run Snowflake first, then dbt
     ingest_snowflake >> ingest_dbt
 ```
 
----
+## Common issues
 
-## Common Issues & Solutions
-
-### "Connection refused"
-
-**Cause:** DataHub GMS isn't running or isn't reachable.
-
-**Fix:**
+**Connection refused**: DataHub GMS isn't running or isn't reachable.
 ```bash
-# Check if GMS is running
 curl http://localhost:8080/health
 
-# If not, restart DataHub
+# If down, restart
 datahub docker quickstart --stop
 datahub docker quickstart
 ```
 
-### "Authentication failed"
+**Authentication failed**: Wrong credentials. Double-check username/password. For Snowflake, verify the role has proper permissions.
 
-**Cause:** Wrong credentials in your recipe.
+**No tables found**: Schema/database patterns are too restrictive. Remove `schema_pattern` and `database_pattern` temporarily to see everything, then add filters back.
 
-**Fix:** Double-check username/password. For Snowflake, make sure the role has proper permissions.
-
-### "No tables found"
-
-**Cause:** Schema/database patterns are too restrictive.
-
-**Fix:** Temporarily remove `schema_pattern` and `database_pattern` to see everything, then add filters back.
-
----
-
-## What's Next?
+## What's next
 
 <div className="row">
   <div className="col col--4">
     <div className="card margin-bottom--lg">
       <div className="card__header">
-        <h3>🔍 Search & Discovery</h3>
+        <h3>Search & Discovery</h3>
       </div>
       <div className="card__body">
-        <p>Master DataHub's powerful search features.</p>
+        <p>Master DataHub's search features.</p>
       </div>
       <div className="card__footer">
         <a className="button button--primary button--block" href="/docs/tutorial-basics/search-discovery">Learn More →</a>
@@ -369,7 +280,7 @@ datahub docker quickstart
   <div className="col col--4">
     <div className="card margin-bottom--lg">
       <div className="card__header">
-        <h3>🌐 Data Lineage</h3>
+        <h3>Data Lineage</h3>
       </div>
       <div className="card__body">
         <p>Visualize how data flows through your organization.</p>
@@ -382,7 +293,7 @@ datahub docker quickstart
   <div className="col col--4">
     <div className="card margin-bottom--lg">
       <div className="card__header">
-        <h3>🏷️ Tags & Glossary</h3>
+        <h3>Tags & Glossary</h3>
       </div>
       <div className="card__body">
         <p>Organize your data with tags and business terms.</p>
@@ -396,4 +307,4 @@ datahub docker quickstart
 
 ---
 
-**Questions?** The DataHub community has probably helped someone with the exact same issue. Ask on [Slack](https://slack.datahubproject.io)!
+Questions? Ask on [Slack](https://slack.datahubproject.io). The community's pretty active.

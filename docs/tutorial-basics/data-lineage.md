@@ -4,18 +4,18 @@ title: Data Lineage
 description: Visualize how data flows through your organization with end-to-end lineage tracking
 ---
 
-# Data Lineage 🌐
+# Data Lineage
 
-*"What happens if I change this table?"* — With lineage, you'll know exactly what breaks.
+You know that feeling when someone asks "hey, can we drop this column?" and you have no idea what'll break? That's what lineage solves.
 
-## What is Data Lineage?
+## What you're looking at
 
-Data lineage is like a family tree for your data. It shows:
+Data lineage tracks how data moves through your systems. It's basically a dependency graph for your tables, columns, and everything that uses them.
 
-- 🔼 **Where data comes from** (upstream dependencies)
-- 🔽 **Where data goes** (downstream impact)
-- 🔄 **How data transforms** along the way
-
+You get three things:
+- Where data comes from (upstream)
+- Where it goes (downstream)  
+- What happens to it along the way
 ```mermaid
 graph LR
     A["<b>Source Tables</b><br/>raw_orders<br/>raw_users"] 
@@ -29,44 +29,19 @@ graph LR
     style D fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
 ```
 
-## Why Lineage Matters
+## Why this matters
 
-### 🔍 Impact Analysis
+**Impact analysis**: Before you change a column, you'll see every dashboard, report, and ML model that depends on it. No more "oops, I broke prod."
 
-*"If I change the `customer_id` column in the source table, what breaks?"*
+**Debugging**: Dashboard showing wrong numbers? Trace backwards to find where the bad data started instead of pinging six teams on Slack.
 
-With lineage, you can see every dashboard, report, and ML model that depends on it — before you make the change.
+**Compliance**: Need to find everywhere a PII column is used for GDPR? Done. Export the list and hand it to legal.
 
-### 🐛 Root Cause Analysis
+**Understanding legacy stuff**: When you inherit a pipeline and need to figure out what it actually does, lineage is your map.
 
-*"This dashboard shows wrong numbers. Where did the problem start?"*
+## How to use it
 
-Trace backwards through lineage to find where bad data entered your pipeline.
-
-### 📋 Compliance & Auditing
-
-*"Show me everywhere this PII column is used."*
-
-Critical for GDPR, CCPA, and internal data governance.
-
-### 📈 Understanding Your Data
-
-*"How is this table created? What business logic is applied?"*
-
-Find the transformations that shape your data.
-
----
-
-## Viewing Lineage
-
-### Step 1: Navigate to Any Dataset
-
-Search for a dataset and click to open its detail page.
-
-### Step 2: Click the "Lineage" Tab
-
-You'll see a beautiful, interactive graph:
-
+Find a dataset and click the "Lineage" tab. You'll get an interactive graph that shows everything connected to it.
 ```mermaid
 graph TD
     subgraph UPSTREAM
@@ -89,30 +64,22 @@ graph TD
     style DATASET fill:#2962ff,stroke:#000,stroke-width:4px,color:#fff
 ```
 
-### Step 3: Explore the Graph
+Click nodes to see details. Double-click to navigate. Scroll to zoom. It's basically what you'd expect.
 
-- **Click nodes** to see details
-- **Double-click** to navigate to that asset
-- **Scroll** to zoom in/out
-- **Drag** to pan around
-- **Click edges** to see relationship details
+## Granularity levels
 
----
+### Dataset-level
 
-## Lineage Depth Levels
-
-### Dataset-Level Lineage
-
-Shows which tables feed into which tables:
-
+Shows which tables feed into which:
 ```
 raw_orders → stg_orders → fct_orders → revenue_summary
 ```
 
-### Column-Level Lineage
+This is fine for most cases. You can see the flow without getting overwhelmed.
 
-Column-level lineage provides a detailed view of how data flows through individual columns:
+### Column-level
 
+This is where it gets useful. You can trace individual columns through transformations:
 ```mermaid
 graph TD
     A[raw_orders.total_amount] 
@@ -126,51 +93,36 @@ graph TD
     style D fill:#fff3e0,stroke:#ef6c00
 ```
 
-:::tip Why Column-Level Matters
-When someone asks *"Where does the revenue number come from?"*, you can trace it back to the exact source column — through every transformation.
-:::
+When someone asks "where does this revenue number come from?", you can trace it back to the exact source column. Way better than grepping through SQL files.
 
----
+## Where lineage comes from
 
-## Lineage Sources
+DataHub picks up lineage from a bunch of places.
 
-DataHub captures lineage from multiple places:
+### dbt
 
-### 🏗️ dbt
-
-When you ingest dbt, lineage is automatically captured from:
-- `ref()` and `source()` calls in your models
-- Dependencies defined in `manifest.json`
-
+Automatically captured from `ref()` and `source()` calls:
 ```sql
--- This automatically creates lineage!
 SELECT * FROM {{ ref('stg_orders') }}
 ```
 
-### 📊 SQL Parsing
+It just works. The lineage is already in your manifest.
 
-DataHub understands SQL! When ingesting from warehouses, it parses:
-- `CREATE TABLE ... AS SELECT`
-- `INSERT INTO ... SELECT`
-- View definitions
+### SQL parsing
 
-### 🔧 Airflow
+DataHub can parse SQL from your warehouse. It understands `CREATE TABLE AS`, `INSERT INTO`, view definitions, all that. Not perfect for complex dynamic SQL, but catches most stuff.
 
-If you use Airflow, the [datahub-airflow-plugin](https://github.com/datahub-project/datahub/tree/master/metadata-ingestion/src/datahub_provider) captures:
-- Task dependencies
-- Dataset reads and writes
-- Execution metadata
+### Airflow
 
-### 📡 Real-Time Events
+The [datahub-airflow-plugin](https://github.com/datahub-project/datahub/tree/master/metadata-ingestion/src/datahub_provider) grabs task dependencies and dataset operations. You'll see your DAG structure reflected in lineage.
 
-For streaming platforms like Kafka:
-- Topic producers and consumers
-- Flink/Spark streaming jobs
+### Streaming platforms
 
-### ✏️ Manual Lineage
+For Kafka, Flink, Spark streaming - topic producers, consumers, the whole flow.
 
-Don't have automatic lineage? Add it manually via UI or API:
+### Manual entry
 
+Sometimes automatic lineage isn't an option. You can add it yourself:
 ```python
 from datahub.emitter.mce_builder import make_lineage_mce
 
@@ -180,16 +132,11 @@ lineage = make_lineage_mce(
 )
 ```
 
----
+Not ideal, but it works.
 
-## Impact Analysis: The Killer Feature
+## Impact analysis in practice
 
-This is where lineage becomes invaluable in production.
-
-### Scenario: Dropping a Column
-
-You need to remove `customer_ssn` from a table. Here's what lineage tells you:
-
+Here's the real use case: you need to drop `customer_ssn` from a table. Lineage shows you:
 ```mermaid
 graph LR
     A["<b>customer_ssn (COLUMN)</b>"]
@@ -214,64 +161,37 @@ graph LR
     A --- ML
 ```
 
-**Now you know exactly who to notify before making the change!**
+Now you know who to email before making the change. You can even export the list.
 
-### How to Use Impact Analysis
+Go to the asset, click "Lineage", look at downstream dependencies. There's an "Impact Analysis" button that gives you a summary view.
 
-1. Navigate to the asset you want to change
-2. Click the **"Lineage"** tab
-3. Look at **downstream** dependencies
-4. Click **"Impact Analysis"** for a summary view
-5. Export the list or share with stakeholders
+## Different views
 
----
+**Graph view**: The default interactive thing. Good for exploring.
 
-## Lineage Visualization Options
+**List view**: Tabular format. Better for exporting or when you need to analyze a lot at once.
 
-### 📊 Graph View (Default)
+**Focused view**: Highlights a specific path. Useful when you're following one particular flow and don't want the noise.
 
-Interactive node-and-edge visualization. Best for exploring relationships.
+**Time-based view**: See how lineage changed over time. What was it last month vs today? Honestly haven't used this much but it's there.
 
-### 📋 List View
+## Getting lineage right
 
-Tabular view of all upstream and downstream assets. Best for exporting or bulk analysis.
+Connect as many sources as you can. The more you ingest, the more complete your lineage:
+- Your warehouse
+- dbt
+- Airflow  
+- BI tools
 
-### 🔍 Focused View
-
-Highlights a specific path through lineage. Useful when following one data flow.
-
-### ⏱️ Time-Based View
-
-See how lineage has changed over time. What was the lineage last month vs. today?
-
----
-
-## Lineage Best Practices
-
-### ✅ Do: Ingest Lineage Everywhere
-
-The more sources you connect, the more complete your lineage picture:
-- ✅ Ingest your warehouse (Snowflake, BigQuery)
-- ✅ Ingest dbt
-- ✅ Ingest Airflow
-- ✅ Ingest BI tools (Tableau, Looker)
-
-### ✅ Do: Enable Column-Level Lineage
-
-It requires more processing but provides significantly more value:
-
+Enable column-level lineage if you can. It takes more processing time but you'll actually use it:
 ```yaml
-# In your ingestion recipe
 source:
   type: snowflake
   config:
     include_column_lineage: true
 ```
 
-### ✅ Do: Document Transformation Logic
-
-When manually adding lineage, include a description:
-
+When adding manual lineage, document what's happening:
 ```python
 lineage = {
     "upstream": "source_table",
@@ -280,69 +200,44 @@ lineage = {
 }
 ```
 
-### ❌ Don't: Ignore Broken Lineage
+If lineage is incomplete, figure out why. Usually it's a missing ingestion source, unparseable dynamic SQL, or some external tool that's not integrated.
 
-If lineage is incomplete, investigate! Common causes:
-- Missing ingestion for a source
-- Dynamic SQL that can't be parsed
-- External tools not integrated
+## When lineage is broken
 
----
+**No lineage at all?**
 
-## Troubleshooting Lineage
-
-### "Why is there no lineage?"
-
-**Check #1:** Was lineage extracted during ingestion?
+Check if it was extracted during ingestion:
 ```bash
-# Look for lineage in ingestion output
 datahub ingest -c recipe.yml 2>&1 | grep -i lineage
 ```
 
-**Check #2:** Is `include_column_lineage` enabled for your source?
+Make sure `include_column_lineage` is enabled. Check if your SQL is too complex to parse.
 
-**Check #3:** Is the SQL parseable? Complex dynamic SQL may not be parsed correctly.
+**Incomplete lineage?**
 
-### "Lineage is incomplete"
+Some sources just don't support automatic extraction. You might need to add a dbt layer, use the Airflow plugin, or fill gaps manually.
 
-Some sources may not support automatic lineage extraction. Consider:
-- Adding a dbt layer for transformation lineage
-- Using the Airflow plugin for pipeline lineage
-- Adding manual lineage for gaps
+**Too many hops?**
 
-### "Too many lineage hops"
+Default is 3 hops each direction. You can adjust this or use filters to focus on what matters.
 
-By default, lineage shows 3 hops in each direction. Adjust in settings or use filters to focus on what matters.
+## Real example
 
----
+The CFO says dashboard revenue doesn't match the financial system. Here's how you'd trace it:
 
-## Real-World Example
+Start at "Revenue Overview" dashboard → it uses `revenue_summary` table → which comes from `fct_orders` → which comes from `stg_orders` → ah, `stg_orders` filters out pending orders.
 
-### Tracing Revenue Discrepancy
+That's the issue. Dashboard excludes pending, financial system includes them.
 
-**Problem:** The CFO reports that dashboard revenue doesn't match the financial system.
+Five minutes instead of five hours of digging through SQL. That's the point.
 
-**Investigation with Lineage:**
-
-1. **Start at the dashboard** → "Revenue Overview"
-2. **Trace upstream** → Powered by `revenue_summary` table
-3. **Trace further** → `revenue_summary` is built from `fct_orders`
-4. **Trace further** → `fct_orders` comes from `stg_orders`
-5. **Find the issue** → `stg_orders` filters out orders with status='pending'
-
-**Root cause found:** The dashboard excludes pending orders, but the financial system includes them.
-
-**Time to diagnosis:** 5 minutes instead of 5 hours of SQL archaeology.
-
----
-
-## What's Next?
+## What's next
 
 <div className="row">
   <div className="col col--6">
     <div className="card margin-bottom--lg">
       <div className="card__header">
-        <h3>✨ Data Quality</h3>
+        <h3>Data Quality</h3>
       </div>
       <div className="card__body">
         <p>Set up assertions and monitor data freshness.</p>
@@ -355,7 +250,7 @@ By default, lineage shows 3 hops in each direction. Adjust in settings or use fi
   <div className="col col--6">
     <div className="card margin-bottom--lg">
       <div className="card__header">
-        <h3>🔐 Data Governance</h3>
+        <h3>Data Governance</h3>
       </div>
       <div className="card__body">
         <p>Implement access controls and compliance policies.</p>

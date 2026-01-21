@@ -4,15 +4,13 @@ title: Quick Installation
 description: Get DataHub running in under 5 minutes with our streamlined installation process
 ---
 
-# Quick Installation ⚡
+# Quick Installation
 
-DataHub can be installed and running in a few minutes using our Docker-based setup.
+DataHub runs on Docker. If you've got Docker installed, you're about five minutes away from having it running locally.
 
 ## Before You Start
 
-Let's make sure you have everything you need. Don't worry — if you've done any development work, you probably have most of these already.
-
-### What You'll Need
+Check if you've got these installed:
 
 | Requirement | Minimum Version | Check Command |
 |-------------|-----------------|---------------|
@@ -20,62 +18,45 @@ Let's make sure you have everything you need. Don't worry — if you've done any
 | **Docker** | 20.10+ | `docker --version` |
 | **Docker Compose** | 2.0+ | `docker-compose --version` |
 
-:::tip Don't have Docker?
-No worries! Download it from [docker.com](https://www.docker.com/get-started). It installs in about 2 minutes and handles all the heavy lifting for us.
-:::
+Don't have Docker? Grab it from [docker.com](https://www.docker.com/get-started). Takes a couple minutes to install.
 
-## The Quickest Start Ever
+## Installation
 
-Ready? Here we go. Open your terminal and run these commands:
+Open your terminal and run these:
 
 ### Step 1: Install the DataHub CLI
-
 ```bash
-# First, let's make sure pip is up to date
 python3 -m pip install --upgrade pip wheel setuptools
-
-# Now, install the DataHub CLI - this is your command center
 python3 -m pip install --upgrade acryl-datahub
 ```
 
-**What just happened?** You installed `datahub`, a powerful CLI tool that lets you control every aspect of DataHub from your terminal.
+This gives you the `datahub` command-line tool for managing everything.
 
 ### Step 2: Launch DataHub
-
 ```bash
-# Start DataHub
 datahub docker quickstart
 ```
 
-The initial setup will download and start all necessary DataHub services. This typically takes 3-5 minutes depending on your internet connection.
+First run downloads all the containers. Takes 3-5 minutes depending on your connection.
 
-### Step 3: Open DataHub
+### Step 3: Open it
 
-Once you see the success message, open your browser and navigate to:
-
+Once it's done, go to:
 ```
 http://localhost:9002
 ```
 
-🎉 **That's it!** You now have a fully functional DataHub instance running locally.
+That's it. You've got DataHub running.
 
-## First-Time Login
+## Login credentials
 
-Use these default credentials to log in:
+Default username and password are both `datahub`. 
 
-| Field | Value |
-|-------|-------|
-| **Username** | `datahub` |
-| **Password** | `datahub` |
+Change the password after you log in if you're doing anything beyond testing. It's in the settings.
 
-:::warning Change Your Password
-If you're planning to use DataHub beyond just testing, **change this password immediately** in the settings after logging in.
-:::
+## What's actually running
 
-## What's Running Now?
-
-Behind the scenes, DataHub has started several services for you:
-
+DataHub spun up a few services for you:
 ```mermaid
 graph TD
     User["<b>Your Browser</b><br/>localhost:9002"] 
@@ -92,61 +73,60 @@ graph TD
     style MySQL fill:#f3e5f5,stroke:#7b1fa2
 ```
 
-## Quick Commands You'll Love
+Frontend talks to the backend services. Elasticsearch handles search. MySQL stores everything.
 
-Here are some commands that'll make your life easier:
-
+## Useful commands
 ```bash
-# 🛑 Stop DataHub (preserves your data)
+# Stop DataHub (keeps your data)
 datahub docker quickstart --stop
 
-# 🔄 Restart DataHub
+# Start it again
 datahub docker quickstart
 
-# 🗑️ Completely reset (WARNING: deletes all data!)
+# Nuclear option - deletes everything
 datahub docker nuke
 
-# 📊 Check what's running
+# See what's running
 docker ps
 ```
 
-## Troubleshooting Like a Pro
+## When things break
 
-### "Port 9002 is already in use"
+### Port 9002 already in use
 
-Something else is using that port. Either stop it or use a different port:
-
+Something else is on that port. Kill it or use a different port:
 ```bash
 datahub docker quickstart --frontend-port 9003
 ```
 
-### "Docker daemon not running"
+### Docker daemon not running
 
-Make sure Docker Desktop is actually running. Look for the whale icon in your system tray.
+Start Docker Desktop. Look for the whale icon in your system tray.
 
-### "Out of memory"
+### Out of memory errors
 
-DataHub needs at least 8GB of RAM allocated to Docker. 
+DataHub needs at least 8GB of RAM. Go to Docker Desktop → Settings → Resources → Memory and bump it up.
 
-**On Docker Desktop:** Settings → Resources → Memory → Set to 8GB+
+### It's stuck downloading
 
-### "It's taking forever"
-
-First-time downloads can be slow. Run this to see what's happening:
-
+First-time setup downloads a bunch of images. Check what's happening:
 ```bash
 docker logs datahub-frontend-react -f
 ```
 
-## What's Next?
+If it's truly hung, stop and try again:
+```bash
+docker-compose down
+datahub docker quickstart
+```
 
-Now that DataHub is running, you're ready to:
+## What's next
 
 <div className="row">
   <div className="col col--6">
     <div className="card margin-bottom--lg">
       <div className="card__header">
-        <h3>📥 Ingest Your First Data</h3>
+        <h3>Ingest Your First Data</h3>
       </div>
       <div className="card__body">
         <p>Connect DataHub to your databases, warehouses, and tools.</p>
@@ -159,10 +139,10 @@ Now that DataHub is running, you're ready to:
   <div className="col col--6">
     <div className="card margin-bottom--lg">
       <div className="card__header">
-        <h3>🔍 Explore the UI</h3>
+        <h3>Explore the UI</h3>
       </div>
       <div className="card__body">
-        <p>Take a tour of DataHub's powerful search and discovery features.</p>
+        <p>Take a tour of DataHub's search and discovery features.</p>
       </div>
       <div className="card__footer">
         <a className="button button--primary button--block" href="/docs/tutorial-basics/ui-tour">Take the Tour →</a>
@@ -173,4 +153,4 @@ Now that DataHub is running, you're ready to:
 
 ---
 
-**Need help?** Our [Slack community](https://slack.datahubproject.io) is incredibly active. Drop a question and someone will help you within minutes!
+Need help? Join the [Slack community](https://slack.datahubproject.io). People usually respond pretty quick.

@@ -4,25 +4,15 @@ title: Data Governance
 description: Implement access controls, policies, and compliance frameworks in DataHub
 ---
 
-# Data Governance 🔐
+# Data Governance
 
-*"Who can see this data? Who approved access?"* — Let's build a governance framework that answers these questions automatically.
+Without governance, anyone can access anything. There's no audit trail. Compliance checks are manual. PII is scattered everywhere and nobody knows where.
 
-## Why Governance Matters
+With governance, you get role-based access control, complete access history, automated policy enforcement, and automatic data classification.
 
-| Without Governance | With Governance |
-|-------------------|-----------------|
-| Anyone can access any data | Role-based access control |
-| No audit trail | Complete access history |
-| Manual compliance checks | Automated policy enforcement |
-| PII scattered everywhere | Automatic data classification |
+## How governance works in DataHub
 
----
-
-## The Governance Stack
-
-DataHub provides multiple layers of governance:
-
+Four layers:
 ```mermaid
 graph TD
     A["<b>POLICIES</b><br/>'Who can do what with which data?'"]
@@ -36,13 +26,11 @@ graph TD
     style D fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
 ```
 
----
+## Ownership
 
-## Ownership: Who's Responsible?
+Every dataset needs owners. Someone who can fix it, someone who understands the business context.
 
-Every dataset should have clearly defined owners to ensure accountability.
-
-### Types of Ownership
+### Types of owners
 
 | Type | Responsibility |
 |------|----------------|
@@ -50,45 +38,33 @@ Every dataset should have clearly defined owners to ensure accountability.
 | **Business Owner** | Defines requirements, approves access |
 | **Steward** | Ensures data quality and documentation |
 
-### Assigning Owners
+### Assigning owners
 
-#### Via UI
+**In the UI**: Open any dataset, click "+ Add Owner", search for a person or team, select ownership type.
 
-1. Open any dataset
-2. Click **"+ Add Owner"**
-3. Search for a person or team
-4. Select ownership type
-
-#### Via Ingestion
-
-Add owners to your ingestion recipe:
-
+**During ingestion**:
 ```yaml
 source:
   type: snowflake
   config:
-    # ... connection config ...
+    # connection config
     
 transformers:
   - type: "pattern_add_dataset_ownership"
     config:
       owner_pattern:
         rules:
-          # Analytics schema owned by analytics team
           ".*analytics.*":
             - owner: "urn:li:corpuser:analytics-team@company.com"
               type: "DATAOWNER"
           
-          # Finance tables owned by finance
           ".*finance.*":
             - owner: "urn:li:corpuser:finance-data@company.com"
               type: "BUSINESS_OWNER"
 ```
 
-#### Via dbt
-
+**Via dbt**:
 ```yaml
-# dbt schema.yml
 models:
   - name: revenue_summary
     meta:
@@ -100,21 +76,13 @@ models:
             type: BUSINESS_OWNER
 ```
 
-### Ownership Best Practices
+Every dataset should have at least two owners: a technical owner who can fix it and a business owner who can answer questions about it.
 
-:::tip The Rule of Two
-Every dataset should have at least:
-1. A **Technical Owner** who can fix it
-2. A **Business Owner** who can answer questions about it
-:::
-
----
-
-## Access Policies: Fine-Grained Control
+## Access policies
 
 Policies control who can view, edit, or access assets.
 
-### Policy Types
+### Policy types
 
 | Type | Controls |
 |------|----------|
@@ -122,31 +90,24 @@ Policies control who can view, edit, or access assets.
 | **Platform Policies** | Who can manage DataHub settings, ingestion |
 | **Access Policies** | Who can view/access the underlying data |
 
-### Creating a Metadata Policy
-
-#### Example: Only owners can edit production datasets
-
+### Example: Only owners can edit production datasets
 ```yaml
 policy:
   name: "Production Dataset Protection"
   type: METADATA
   state: ACTIVE
   
-  # Who does this apply to?
   actors:
-    resourceOwners: true    # Owners can edit
-    users: []               # No specific users (use groups instead)
+    resourceOwners: true
     groups:
-      - "urn:li:corpGroup:data-governance"  # Governance team too
+      - "urn:li:corpGroup:data-governance"
   
-  # What actions are allowed?
   privileges:
     - EDIT_ENTITY_TAGS
     - EDIT_ENTITY_GLOSSARY_TERMS
     - EDIT_ENTITY_DOCS
     - EDIT_ENTITY_OWNERS
   
-  # Which resources?
   resources:
     filter:
       criteria:
@@ -155,12 +116,9 @@ policy:
           condition: EQUALS
 ```
 
-### Creating via UI
+### Creating policies in the UI
 
-1. Go to **Settings** → **Policies**
-2. Click **"Create Policy"**
-3. Configure actors, privileges, and resources
-
+Settings → Policies → "Create Policy". Configure actors, privileges, and resources:
 ```mermaid
 graph TD
     A["<b>Create New Policy</b>"] 
@@ -194,12 +152,9 @@ graph TD
     style RE fill:#f3e5f5,stroke:#7b1fa2
 ```
 
-### Common Policy Patterns
+### Common patterns
 
-#### Pattern 1: Self-Service for Teams
-
-Each team manages their own domain:
-
+**Self-service for teams** - each team manages their own domain:
 ```yaml
 policies:
   - name: "Marketing Team Self-Service"
@@ -217,10 +172,7 @@ policies:
       domains: ["finance"]
 ```
 
-#### Pattern 2: PII Lockdown
-
-Only approved individuals can see PII:
-
+**PII lockdown** - only approved users can see PII:
 ```yaml
 policy:
   name: "PII Visibility Restriction"
@@ -236,10 +188,7 @@ policy:
           condition: EQUALS
 ```
 
-#### Pattern 3: Read-Only for Analysts
-
-Analysts can view but not modify:
-
+**Read-only for analysts**:
 ```yaml
 policy:
   name: "Analyst Read-Only Access"
@@ -252,13 +201,11 @@ policy:
     type: ALL
 ```
 
----
-
-## Data Classification
+## Data classification
 
 Automatically classify data based on content patterns.
 
-### Classification Types
+### Classification levels
 
 | Level | Description | Example |
 |-------|-------------|---------|
@@ -267,12 +214,10 @@ Automatically classify data based on content patterns.
 | **Confidential** | Need-to-know basis | Revenue data |
 | **Restricted** | Heavily controlled | PII, financial records |
 
-### Automatic Classification
+### Automatic detection
 
-DataHub can automatically detect and tag sensitive data:
-
+DataHub can detect and tag sensitive data automatically:
 ```yaml
-# classification_config.yml
 classification:
   enabled: true
   
@@ -304,8 +249,7 @@ classification:
       tag: "pii"
 ```
 
-### Classification Workflow
-
+How it works:
 ```mermaid
 graph LR
     A["<b>Ingestion</b><br/>Scans Data"] 
@@ -317,16 +261,11 @@ graph LR
     style C fill:#ffebee,stroke:#c62828,stroke-width:2px
 ```
 
----
+## Access requests
 
-## Access Requests & Workflows
+For sensitive data, you can require approval before granting access.
 
-For sensitive data, implement an approval workflow.
-
-### Requesting Access
-
-When a user tries to access restricted data:
-
+When someone tries to access restricted data:
 ```mermaid
 graph TD
     subgraph Access [🔒 Access Required]
@@ -342,8 +281,7 @@ graph TD
     style Btn fill:#40a9ff,color:#fff,stroke:none
 ```
 
-### Approval Flow
-
+The approval flow:
 ```mermaid
 graph LR
     A["<b>Request Submitted</b><br/>by User"] 
@@ -357,27 +295,11 @@ graph LR
     style D fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
 ```
 
----
+## Audit trail
 
-## Audit Trail: Complete History
+Every action gets logged. Who viewed what, who edited metadata, who changed ownership, who approved access requests, schema changes, ingestion runs.
 
-Every action in DataHub is logged.
-
-### What's Tracked
-
-- ✅ Who viewed an asset
-- ✅ Who edited metadata
-- ✅ Who changed ownership
-- ✅ Who approved access requests
-- ✅ Schema changes and when they happened
-- ✅ Ingestion runs and their status
-
-### Viewing Audit History
-
-1. Open any dataset
-2. Click **"History"** tab
-3. See complete timeline
-
+View audit history: Open any dataset → "History" tab.
 ```mermaid
 graph TD
     subgraph Audit [📜 Audit History: finance.revenue]
@@ -407,12 +329,8 @@ graph TD
     style Btn fill:#40a9ff,color:#fff,stroke:none
 ```
 
-### Exporting for Compliance
-
-For SOC2, GDPR, or other audits:
-
+Export for compliance audits:
 ```bash
-# Export audit logs for a specific time range
 datahub audit export \
   --start-date 2024-01-01 \
   --end-date 2024-03-31 \
@@ -420,11 +338,9 @@ datahub audit export \
   --output q1_audit.csv
 ```
 
----
+## Compliance frameworks
 
-## Compliance Frameworks
-
-### GDPR Compliance
+### GDPR
 
 | Requirement | DataHub Solution |
 |-------------|-----------------|
@@ -433,7 +349,7 @@ datahub audit export \
 | Data minimization | Quality rules enforce data retention |
 | Audit trail | Complete access history |
 
-### SOC2 Compliance
+### SOC2
 
 | Requirement | DataHub Solution |
 |-------------|-----------------|
@@ -442,12 +358,8 @@ datahub audit export \
 | Monitoring | Data quality alerts |
 | Documentation | Centralized data dictionary |
 
-### Implementing GDPR Article 30
-
-Create a processing activities registry:
-
+### GDPR Article 30 registry
 ```yaml
-# Register all PII processing
 glossary_term:
   name: "GDPR Article 30 Registry"
   terms:
@@ -464,13 +376,9 @@ glossary_term:
           - "urn:li:dataset:billing_info"
 ```
 
----
+## Role-based access control
 
-## Role-Based Access Control (RBAC)
-
-### Defining Roles
-
-Create roles that map to job functions:
+Define roles that map to job functions:
 
 | Role | Permissions |
 |------|-------------|
@@ -479,10 +387,8 @@ Create roles that map to job functions:
 | **Data Steward** | Manage glossary, tags, quality rules |
 | **Data Admin** | Full access, manage policies |
 
-### Group-to-Role Mapping
-
+Map groups to roles:
 ```yaml
-# rbac_config.yml
 roles:
   - name: "data-consumer"
     privileges:
@@ -522,12 +428,9 @@ group_mappings:
     role: "data-admin"
 ```
 
----
+## Governance dashboard
 
-## Governance Dashboard
-
-Monitor your governance program effectiveness:
-
+Monitor how well your governance program is working:
 ```mermaid
 graph TD
     subgraph Statistics
@@ -554,15 +457,13 @@ graph TD
     style Actions fill:#f9f9f9,stroke:#333
 ```
 
----
-
-## What's Next?
+## What's next
 
 <div className="row">
   <div className="col col--6">
     <div className="card margin-bottom--lg">
       <div className="card__header">
-        <h3>🔌 API Reference</h3>
+        <h3>API Reference</h3>
       </div>
       <div className="card__body">
         <p>Automate governance with the GraphQL API.</p>

@@ -4,34 +4,15 @@ title: Tags & Glossary
 description: Organize your data with tags, glossary terms, and domains for better discoverability
 ---
 
-# Tags & Glossary 🏷️
+# Tags & Glossary
 
-*"What does this column actually mean?"* — Let's make sure everyone speaks the same data language.
+Without proper organization, your data catalog turns into a mess. "What's the difference between customer_total, cust_amt, and client_revenue?" "Is this table safe to use in production?" "Does this column contain PII?"
 
-## The Organization Problem
+Tags and glossary terms fix this. Revenue metrics get tagged consistently. Production tables are marked as safe. PII columns are clearly labeled.
 
-Without proper organization, your data catalog becomes a junkyard:
+## The organization hierarchy
 
-```
-❌ Before Tags & Glossary:
-   "What's the difference between customer_total, cust_amt, and client_revenue?"
-   "Is this table safe to use in production?"
-   "Does this column contain PII?"
-```
-
-```
-✅ After Tags & Glossary:
-   All revenue metrics → Tagged with "Revenue Metrics" glossary term
-   Production tables → Tagged with ✅ "production"
-   PII columns → Tagged with 🔒 "pii" 
-```
-
----
-
-## Understanding the Hierarchy
-
-DataHub provides three levels of organization:
-
+DataHub has three levels:
 ```mermaid
 graph TD
     A["<b>DOMAINS</b><br/>High-level business areas (Finance, Marketing)"]
@@ -43,40 +24,15 @@ graph TD
     style C fill:#fff3e0,stroke:#ef6c00,stroke-width:2px
 ```
 
----
+## Tags
 
-## Tags: Quick Labels
+Tags are simple labels. Like sticky notes.
 
-Tags are the simplest way to categorize your data. Think of them as sticky notes.
+### Creating tags
 
-### Creating Tags
+**UI**: Settings → Tags → "Create Tag". Add name, description, optional color.
 
-#### Via UI
-
-1. Go to **Settings** → **Tags**
-2. Click **"Create Tag"**
-3. Add name, description, and optional color
-
-```mermaid
-graph TD
-    A["<b>Create New Tag</b>"]
-    
-    subgraph Fields
-        Name["Name: pii"]
-        Desc["Description: Contains Personally Identifiable Information..."]
-        Color["Color: Red"]
-    end
-
-    A --- Name
-    Name --- Desc
-    Desc --- Color
-
-    style A fill:#e3f2fd,stroke:#1565c0,stroke-width:2px
-    style Color fill:#ffebee,stroke:#c62828
-```
-
-#### Via CLI
-
+**CLI**:
 ```bash
 datahub tag create \
   --name "pii" \
@@ -84,42 +40,30 @@ datahub tag create \
   --color "#ff0000"
 ```
 
-### Recommended Tag Set
-
-Here's a battle-tested set of tags to start with:
+### Starter tag set
 
 | Tag | Color | Purpose |
 |-----|-------|---------|
-| `production` | 🟢 Green | Safe for production use |
-| `deprecated` | 🔴 Red | Should not be used in new work |
-| `pii` | 🟠 Orange | Contains personal information |
-| `sensitive` | 🟠 Orange | Requires elevated permissions |
-| `experimental` | 🟡 Yellow | May change without notice |
-| `golden` | ⭐ Gold | Curated, trusted dataset |
-| `raw` | ⚪ Gray | Unprocessed source data |
-| `staging` | 🔵 Blue | Intermediate processing layer |
+| `production` | Green | Safe for production use |
+| `deprecated` | Red | Don't use in new work |
+| `pii` | Orange | Contains personal information |
+| `sensitive` | Orange | Requires elevated permissions |
+| `experimental` | Yellow | May change without notice |
+| `golden` | Gold | Curated, trusted dataset |
+| `raw` | Gray | Unprocessed source data |
+| `staging` | Blue | Intermediate processing layer |
 
-### Applying Tags
+### Applying tags
 
-#### To a Dataset
+**To a dataset**: Open it, click "+ Add Tag", select your tag.
 
-1. Open the dataset
-2. Click **"+ Add Tag"** in the header
-3. Search and select your tag
+**To a column**: Schema tab → click "+ Tag" next to any column.
 
-#### To a Column
-
-1. Open the dataset's **Schema** tab
-2. Click the **"+ Tag"** button next to any column
-3. Select the tag
-
-#### In Bulk (via API)
-
+**In bulk**:
 ```python
 from datahub.emitter.mcp import MetadataChangeProposalWrapper
 from datahub.metadata.schema_classes import GlobalTagsClass, TagAssociationClass
 
-# Apply tags to multiple datasets
 datasets = [
     "urn:li:dataset:(urn:li:dataPlatform:snowflake,prod.analytics.customers,PROD)",
     "urn:li:dataset:(urn:li:dataPlatform:snowflake,prod.analytics.orders,PROD)",
@@ -138,32 +82,21 @@ for dataset_urn in datasets:
     emitter.emit(mcp)
 ```
 
----
+## Glossary terms
 
-## Glossary Terms: Business Definitions
+Glossary terms are richer than tags. They have definitions, relationships, and ownership.
 
-Glossary terms are richer than tags. They include definitions, relationships, and ownership.
+### Why they matter
 
-### Why Glossary Terms Matter
+Three teams use "Revenue" but mean different things. Sales says revenue is when a deal closes. Finance says it's recognized revenue per GAAP. Product says it's in-app purchase total.
 
-```
-Scenario: Three teams use the word "Revenue"
+Result: Dashboards show different numbers. Everyone's confused.
 
-Team A (Sales): Revenue = Deal closed amount
-Team B (Finance): Revenue = Recognized revenue per GAAP
-Team C (Product): Revenue = In-app purchase total
+Solution: One glossary term "Revenue" with the official definition.
 
-Result: Dashboards show different numbers, everyone is confused!
+### Creating a glossary
 
-Solution: Create one glossary term "Revenue" with THE official definition
-```
-
-### Creating a Glossary
-
-#### Step 1: Create Term Groups
-
-Term groups organize related terms:
-
+**Step 1**: Create term groups to organize related terms.
 ```mermaid
 graph TD
     subgraph "Business Glossary"
@@ -182,9 +115,7 @@ graph TD
     D --- D2["PHI"]
 ```
 
-#### Step 2: Create Terms
-
-For each term, define:
+**Step 2**: Create terms with these fields:
 
 | Field | Purpose | Example |
 |-------|---------|---------|
@@ -195,13 +126,9 @@ For each term, define:
 | **Owners** | Who maintains this | "Finance Team" |
 | **Source of Truth** | Authoritative dataset | "analytics.arr_summary" |
 
-### Creating Terms via UI
+### Creating terms via UI
 
-1. Go to **Govern** → **Glossary**
-2. Click **"+ Create Term Group"** (if needed)
-3. Click **"+ Create Term"**
-4. Fill in the definition
-
+Govern → Glossary → "+ Create Term Group" (if needed) → "+ Create Term" → fill in the definition.
 ```mermaid
 graph TD
     A["<b>Create Glossary Term</b>"]
@@ -224,17 +151,9 @@ graph TD
     style Def fill:#f9f9f9
 ```
 
-### Linking Terms to Data
+### Linking terms to data
 
-Once a term exists, link it to relevant columns and datasets:
-
-```mermaid
-graph TD
-    subgraph Dataset ["📊 analytics.revenue_summary"]
-        direction LR
-    end
-    style Dataset fill:#f5f7fa,stroke:#40a9ff,stroke-width:2px,color:#1c1e21
-```
+Link terms to relevant columns and datasets. When someone hovers over a column, they see the business definition with owner info.
 ```mermaid
 graph LR
     subgraph "Linked Terms"
@@ -247,28 +166,12 @@ graph LR
     style T2 fill:#e8f5e9,stroke:#2e7d32
     style T3 fill:#e8f5e9,stroke:#2e7d32
 ```
-```
 
-Now when someone hovers over the column, they see:
+## Domains
 
-```mermaid
-graph TD
-    H["<b>arr (DECIMAL)</b>"]
-    H --- T["📖 Annual Recurring Revenue (ARR)"]
-    T --- Def["The annualized value of all active recurring..."]
-    Def --- Metadata["Owner: Finance Team | Related: MRR, Net Revenue"]
+Domains represent high-level organizational areas. Good for large orgs.
 
-    style H fill:#e3f2fd,stroke:#1565c0,stroke-width:2px
-    style T fill:#f9f9f9
-```
-
----
-
-## Domains: Business Ownership
-
-Domains represent high-level organizational areas. They're perfect for large organizations.
-
-### When to Use Domains
+### When to use domains
 
 | Scenario | Solution |
 |----------|----------|
@@ -276,31 +179,13 @@ Domains represent high-level organizational areas. They're perfect for large org
 | "Finance data needs special governance" | Create a **Finance** domain |
 | "Product analytics is separate from business analytics" | Create separate domains |
 
-### Creating Domains
+### Creating domains
 
-1. Go to **Govern** → **Domains**
-2. Click **"+ Create Domain"**
-3. Define name, description, and owners
+Govern → Domains → "+ Create Domain" → define name, description, owners.
 
-```mermaid
-graph TD
-    A["<b>Create Domain</b>"]
-    
-    subgraph Profile
-        Name["Name: Finance"]
-        Desc["Description: All financial data including revenue..."]
-        Owners["Owners: CFO, Finance Data Team"]
-    end
-
-    A --- Profile
-
-    style A fill:#e3f2fd,stroke:#1565c0,stroke-width:2px
-```
-
-### Domain Hierarchy
+### Domain hierarchy
 
 Domains can be nested:
-
 ```mermaid
 graph TD
     C["🏢 Company"]
@@ -316,10 +201,8 @@ graph TD
     M --- M2["📁 Attribution"]
 ```
 
-### Assigning Assets to Domains
-
+### Assigning assets to domains
 ```python
-# Bulk assign datasets to a domain
 from datahub.emitter.mcp import MetadataChangeProposalWrapper
 from datahub.metadata.schema_classes import DomainsClass
 
@@ -339,12 +222,9 @@ for dataset in finance_datasets:
     emitter.emit(mcp)
 ```
 
----
+## Full picture
 
-## Putting It All Together
-
-Here's how a well-organized dataset looks:
-
+A well-organized dataset:
 ```mermaid
 graph TD
     D["📊 <b>customer_revenue_summary</b>"]
@@ -368,16 +248,10 @@ graph TD
     style Tags fill:#f1f8e9,stroke:#558b2f
 ```
 
----
+## Automation
 
-## Automation: Propagating Organization
-
-Don't tag everything manually! Use automation:
-
-### Auto-Tagging Based on Patterns
-
+Don't tag everything manually. Use patterns:
 ```yaml
-# classification_rules.yml
 rules:
   - name: "Auto-tag PII columns"
     pattern:
@@ -404,10 +278,8 @@ rules:
 
 ### Inheriting from dbt
 
-If you use dbt, tags and descriptions sync automatically:
-
+Tags and descriptions sync automatically from dbt:
 ```yaml
-# schema.yml in dbt
 models:
   - name: customer_revenue
     description: "Aggregated customer revenue metrics"
@@ -426,50 +298,23 @@ models:
               - "urn:li:glossaryTerm:annual_recurring_revenue"
 ```
 
----
+## Don't screw this up
 
-## Best Practices
+**Start with a core vocabulary**: Before creating terms, get stakeholders aligned. List the 20 most important business terms. Get 3-4 key people to agree on definitions. Document in DataHub.
 
-### ✅ Start with a Core Vocabulary
+**Assign clear ownership**: Every term and domain needs an owner. "Owned by Everyone" means nobody owns it. "Owned by Finance Data Team, contact: @sarah" is better.
 
-Before creating terms, get stakeholders aligned:
+**Keep tags simple**: Don't create pii, personal, sensitive, confidential, private, and secret. Just use pii for personal data and sensitive for business-sensitive data.
 
-1. List the 20 most important business terms
-2. Get 3-4 key people to agree on definitions
-3. Document in DataHub
+**Review regularly**: Schedule quarterly reviews. Are terms still accurate? Are there new concepts to add? Are deprecated terms cleaned up?
 
-### ✅ Assign Clear Ownership
-
-Every term and domain should have an owner:
-
-```
-❌ Wrong: "Owned by Everyone" (means nobody)
-✅ Right: "Owned by Finance Data Team, contact: @sarah"
-```
-
-### ✅ Keep Tags Simple
-
-```
-❌ Too many tags: pii, personal, sensitive, confidential, private, secret
-✅ Simple: pii (for personal data), sensitive (for business sensitive)
-```
-
-### ✅ Review Regularly
-
-Schedule quarterly reviews:
-- Are terms still accurate?
-- Are there new concepts to add?
-- Are deprecated terms cleaned up?
-
----
-
-## What's Next?
+## What's next
 
 <div className="row">
   <div className="col col--6">
     <div className="card margin-bottom--lg">
       <div className="card__header">
-        <h3>🔐 Access Control</h3>
+        <h3>Access Control</h3>
       </div>
       <div className="card__body">
         <p>Implement fine-grained permissions.</p>
@@ -482,7 +327,7 @@ Schedule quarterly reviews:
   <div className="col col--6">
     <div className="card margin-bottom--lg">
       <div className="card__header">
-        <h3>🔌 Integrations</h3>
+        <h3>Integrations</h3>
       </div>
       <div className="card__body">
         <p>Connect more data sources.</p>

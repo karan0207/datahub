@@ -4,49 +4,39 @@ title: Search & Discovery
 description: Find any dataset, dashboard, or pipeline in seconds with DataHub's intelligent search
 ---
 
-# Search & Discovery 🔍
+# Search & Discovery
 
-*"Where is that customer data table?"* — If you've ever asked this question, you're going to love DataHub's search.
+The search bar is how you find things in DataHub. It's pretty straightforward - just type what you're looking for.
 
-The search bar is the central tool for finding assets across your data estate. It provides real-time results and understands natural language queries.
+## Basic search
 
-### Just Start Typing
-
-Type what you're looking for in plain English:
-
+Type anything in the search bar:
 ```
 customer orders
 ```
 
-DataHub will search across:
-- 📊 **Dataset names** and descriptions
-- 📋 **Column names** within tables
-- 📈 **Dashboard titles** and chart names
-- 🔧 **Pipeline names** and job descriptions
-- 🏷️ **Tags** and glossary terms
-- 👤 **Owner names**
+It searches across everything:
+- Dataset names and descriptions
+- Column names
+- Dashboard titles
+- Pipeline names
+- Tags and glossary terms
+- Owner names
 
-:::tip Think Like Google
-You don't need to know the exact name. Searching "customer" will find `dim_customers`, `customer_orders`, `CustomerAnalytics`, and anything else related.
-:::
+You don't need the exact name. Searching "customer" will find `dim_customers`, `customer_orders`, `CustomerAnalytics`, whatever.
 
----
+## Search operators
 
-## Search Operators: Power User Mode
+Want to be more specific? Use these:
 
-Want more control? Use these operators to refine your search:
+### Exact phrases
 
-### Exact Phrase Match
-
-Use quotes to match an exact phrase:
-
+Use quotes:
 ```
 "customer lifetime value"
 ```
 
-### Field-Specific Search
-
-Search within specific fields:
+### Field-specific search
 
 | Query | What It Finds |
 |-------|---------------|
@@ -56,128 +46,66 @@ Search within specific fields:
 | `tag:pii` | Assets tagged with "pii" |
 | `platform:snowflake` | Only Snowflake assets |
 
-### Boolean Operators
-
-Combine terms with AND, OR, NOT:
-
+### Boolean operators
 ```
 customer AND orders NOT deprecated
 ```
-
 ```
 revenue OR sales
 ```
 
 ### Wildcards
-
-Use `*` for partial matches:
-
 ```
 customer_*
 ```
-*Matches: customer_orders, customer_profiles, customer_segments*
 
----
+Matches customer_orders, customer_profiles, whatever starts with customer_.
 
-## The Filter Sidebar: Drill Down Fast
+## Filters
 
-On the left side of search results, you'll find powerful filters:
+Left side of the search results has filters. They're pretty useful.
 
-### 📦 Platform
-Filter by data source:
-- Snowflake
-- PostgreSQL
-- dbt
-- Tableau
-- And 100+ more...
+**Platform**: Snowflake, PostgreSQL, dbt, Tableau, etc.
 
-### 🏷️ Tags
-Find assets by tags your team has applied:
-- `pii`
-- `deprecated`
-- `production`
-- `experimental`
+**Tags**: Filter by tags like `pii`, `deprecated`, `production`.
 
-### 📖 Glossary Terms
-Business-friendly categories:
-- Revenue Metrics
-- Customer Data
-- Marketing Attribution
+**Glossary Terms**: Business categories like "Revenue Metrics" or "Customer Data".
 
-### 👤 Owners
-Find everything owned by a specific person or team:
-- Data Engineering
-- Analytics Team
-- Sarah Johnson
+**Owners**: Find everything owned by a person or team.
 
-### 🌐 Domain
-Organizational domains:
-- Finance
-- Marketing
-- Product
+**Domain**: Organizational domains like Finance, Marketing, Product.
 
----
+## Advanced filters
 
-## Advanced Filters: The Full Toolkit
+Click "Advanced" in the filter panel for more options.
 
-Click **"Advanced"** in the filter panel to unlock the full power:
+**Column-level search**: Find every table with an "email" column. Good for compliance stuff.
 
-### Column-Level Lineage
+**Container filtering**: Find assets in a specific database or schema like `analytics.prod`.
 
-Column-level lineage provides a detailed view of how data flows through individual columns:
+**Combining filters**: Default is AND logic (all must match). Switch to "any filter" for OR logic.
 
-```
-Column Name: "email"
-```
-
-*This finds every table with an email column — incredibly useful for compliance!*
-
-### Container Filtering
-
-Find assets within a specific database or schema:
-
-```
-Container: "analytics.prod"
-```
-
-### Combining Multiple Filters
-
-By default, filters use AND logic (all must match). Click **"all filters"** to switch to **"any filter"** (OR logic).
-
-**Example: Find PII**
-```
-Tag = "pii" OR Column Name contains "email" OR Column Name contains "ssn"
-```
-
-### Negating Filters
-
-Click the condition and select **"does not contain"** or **"is not"**:
-
+**Negating filters**: Change the condition to "does not contain" or "is not":
 ```
 Tag does not contain: "deprecated"
 ```
 
----
+## How results are ranked
 
-## Understanding Search Results
-
-### Result Ranking
-
-Results are ranked by relevance. DataHub considers:
+Results show up based on relevance:
 
 | Factor | Impact |
 |--------|--------|
-| **Name match** | Highest priority |
-| **Description match** | High priority |
-| **Column name match** | Medium priority |
-| **Usage frequency** | Higher usage = higher ranking |
-| **Recent updates** | Recently modified assets rank higher |
-| **Ownership** | Assets you own appear higher |
+| **Name match** | Highest |
+| **Description match** | High |
+| **Column name match** | Medium |
+| **Usage frequency** | More usage = higher rank |
+| **Recent updates** | Recently modified ranks higher |
+| **Ownership** | Your stuff shows up higher |
 
-### Result Cards
+### Result cards
 
-Each result shows key information at a glance:
-
+Each result shows key info:
 ```mermaid
 graph TD
     subgraph Card ["📊 prod.analytics.customer_orders"]
@@ -191,16 +119,13 @@ graph TD
     style Card fill:#f5f7fa,stroke:#40a9ff,stroke-width:2px,color:#1c1e21
 ```
 
----
+## Browsing
 
-## Browsing: When You Want to Explore
+Sometimes you don't know what you're looking for. Just browse.
 
-Sometimes you don't know exactly what you're looking for. That's where browsing comes in.
+### By platform
 
-### Browse by Platform
-
-Click **Browse** → **Platform** to see all assets organized by data source:
-
+Click Browse → Platform to see assets organized by data source:
 ```mermaid
 graph TD
     A[📦 Snowflake] --> B[📁 PROD_DB]
@@ -218,10 +143,9 @@ graph TD
     J[📦 Tableau] --> K[📁 Executive Dashboards]
 ```
 
-### Browse by Domain
+### By domain
 
-If your organization uses domains, browse by business area:
-
+If your org uses domains, browse by business area:
 ```mermaid
 graph TD
     A[🏢 Finance] --> A1[📊 Revenue tables]
@@ -234,10 +158,9 @@ graph TD
     C --> C2[📊 Feature analytics]
 ```
 
-### Browse by Glossary
+### By glossary
 
-Navigate using business terminology:
-
+Navigate using business terms:
 ```mermaid
 graph TD
     A[📖 Revenue Metrics] --> A1[ARR Annual Recurring Revenue]
@@ -249,56 +172,31 @@ graph TD
     B --> B3[Net Promoter Score]
 ```
 
----
+## Saved searches
 
-## Saving Searches: Don't Repeat Yourself
+Find yourself running the same search repeatedly? Save it.
 
-Found a useful search? Save it!
+1. Do your search with filters
+2. Click "Save Search" (bookmark icon)
+3. Name it: `PII Tables`, `My Team's Dashboards`, whatever
 
-### Create a Saved Search
+Access saved searches from your profile. Each one has a shareable URL you can send to teammates.
 
-1. Perform your search with all desired filters
-2. Click **"Save Search"** (bookmark icon)
-3. Give it a name: `PII Tables`, `My Team's Dashboards`, etc.
+## Shortcuts and tips
 
-### Access Saved Searches
+**Star favorites**: Click the star on any asset. They show up on your home page.
 
-Click your profile → **Saved Searches** to see all your saved queries.
+**Keyboard shortcut**: Press `/` to jump to the search bar. `Enter` to search, `Esc` to close.
 
-### Share with Your Team
+**Recently viewed**: Your home page shows what you looked at recently. Most of the time, you're looking for something you've seen before.
 
-Each saved search has a shareable URL. Send it to teammates and they'll see the exact same results.
+**Follow assets**: Click "Follow" on important stuff to get notified when it changes.
 
----
+**Search in lineage**: When viewing lineage, the search bar highlights specific nodes in the graph.
 
-## Pro Tips from Power Users
+## Programmatic search
 
-### 🎯 Tip 1: Star Your Favorites
-
-Click the ⭐ star on any asset to add it to your personal list. Access them quickly from the home page.
-
-### 🎯 Tip 2: Use the Keyboard
-
-Press `/` anywhere to focus the search bar instantly. Press `Enter` to search, `Esc` to close.
-
-### 🎯 Tip 3: Check "Recently Viewed"
-
-Your home page shows recently viewed assets. 80% of the time, what you need is something you looked at before.
-
-### 🎯 Tip 4: Follow Assets
-
-Click **Follow** on important assets to get notifications when they change.
-
-### 🎯 Tip 5: Search in Lineage
-
-When viewing lineage, use the search bar within the lineage graph to highlight specific nodes.
-
----
-
-## GraphQL API: Programmatic Search
-
-Need to search from code? DataHub exposes a powerful GraphQL API:
-
+Need to search from code? Use the GraphQL API:
 ```graphql
 query searchDatasets {
   search(
@@ -330,17 +228,15 @@ query searchDatasets {
 }
 ```
 
-For more API examples, see our [API Reference](/docs/tutorial-extras/api-reference).
+Check the [API Reference](/docs/tutorial-extras/api-reference) for more examples.
 
----
-
-## What's Next?
+## What's next
 
 <div className="row">
   <div className="col col--6">
     <div className="card margin-bottom--lg">
       <div className="card__header">
-        <h3>🌐 Explore Lineage</h3>
+        <h3>Explore Lineage</h3>
       </div>
       <div className="card__body">
         <p>See how data flows from source to dashboard.</p>
@@ -353,7 +249,7 @@ For more API examples, see our [API Reference](/docs/tutorial-extras/api-referen
   <div className="col col--6">
     <div className="card margin-bottom--lg">
       <div className="card__header">
-        <h3>🏷️ Organize with Tags</h3>
+        <h3>Organize with Tags</h3>
       </div>
       <div className="card__body">
         <p>Create tags and glossary terms for better organization.</p>

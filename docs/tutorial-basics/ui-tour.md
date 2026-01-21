@@ -4,178 +4,150 @@ title: UI Tour
 description: A visual walkthrough of DataHub's powerful interface
 ---
 
-# DataHub UI Tour 🎨
+# DataHub UI Tour
 
-Explore the DataHub interface and its core navigation components.
+Quick tour of the interface and where things are.
 
-## The Home Page
+## Home page
 
-When you first log in, you'll see your personalized home:
-
+When you log in, you see your personalized home:
 ```mermaid
-graph TD
-    subgraph Header
-        Logo["🏠 DataHub"] --- Search["🔍 Search..."] --- User["👤 You"]
+flowchart LR
+    subgraph NAV[Navigation]
+        Logo[DataHub]
+        Search["Search..."]
+        Profile[Profile]
     end
 
-    subgraph "Welcome Section"
-        Greeting["Good morning, Alex! 👋"]
-        
-        Stats["📈 <b>Your Data at a Glance</b><br/>⭐ Favorites: 12 | 🕐 Recent: 25 | 📊 Owned: 47"]
-    end
-
-    subgraph "Recently Viewed"
-        R1["📊 analytics.customer_orders (5m ago)"]
-        R2["📈 Revenue Dashboard (1h ago)"]
-        R3["📊 marketing.campaigns (2h ago)"]
-    end
-
-    subgraph "Needs Attention"
-        A1["⚠️ 3 datasets have failing assertions"]
-        A2["⚠️ 2 pending access requests"]
-    end
-
-    Header --- Welcome
-    Welcome --- Recently
-    Recently --- Needs
-
-    style Greeting fill:#fff,stroke:none,font-size:1.2em
-    style Stats fill:#e3f2fd,stroke:#1565c0,stroke-width:2px
-    style A1 fill:#fff3e0,stroke:#ef6c00
-    style A2 fill:#fff3e0,stroke:#ef6c00
-```
-
-### Key Elements
-
-| Element | Purpose |
-|---------|---------|
-| **Search Bar** | Find any asset instantly |
-| **Favorites** | Quick access to starred assets |
-| **Recently Viewed** | Jump back to what you were working on |
-| **Needs Attention** | Action items requiring your response |
-
----
-
-## The Search Experience
-
-### Global Search Bar
-
-Click the search bar (or press `/`) to start searching:
-
-```mermaid
-graph TD
-    S["🔍 <b>customer orders</b>"]
-    
-    subgraph "Quick Results"
-        Q1["📊 analytics.customer_orders | Snowflake"]
-        Q2["📊 staging.stg_customer_orders | dbt"]
-        Q3["📈 Customer Orders Dashboard | Tableau"]
-    end
-
-    subgraph "Suggested Filters"
-        F1["📦 Platform: Snowflake"]
-        F2["🏷️ Tag: production"]
-        F3["📖 Glossary: Customer Metrics"]
-    end
-
-    S --- Quick
-    Quick --- Filters
-```
-
-### Search Results Page
-
-Full results with filters on the left:
-
-```mermaid
-graph LR
-    subgraph Filters
+    subgraph MAIN[Main Content]
         direction TB
-        F1["☑ Dataset"]
-        F2["☐ Dashboard"]
-        F3["☑ Snowflake"]
-        F4["☑ production"]
+        Stats["Favorites: 12 · Recent: 25 · Owned: 47"]
+        R1[analytics.customer_orders]
+        R2[Revenue Dashboard]
+        A1["⚠ 3 failing assertions"]
+        A2["⚠ 2 access requests"]
     end
 
-    subgraph Results
-        direction TB
-        R1["📊 <b>analytics.customer_orders</b><br/>Snowflake • 25 columns • ⭐ Golden"]
-        R2["📊 <b>staging.stg_customer_orders</b><br/>dbt • 12 columns"]
-        R3["📈 <b>Customer Orders Dashboard</b><br/>Tableau • 5 charts"]
-    end
+    NAV ~~~ MAIN
 
-    Filters --- Results
-    
-    style R1 fill:#e3f2fd,stroke:#1565c0
-    style R2 fill:#f9f9f9
-    style R3 fill:#f9f9f9
+    style NAV fill:#1976d2,color:#fff,stroke:#1565c0
+    style Search fill:#2196f3,color:#fff,stroke:#1976d2
+    style Stats fill:#e3f2fd,stroke:#1976d2
+    style MAIN fill:#fafafa,stroke:#e0e0e0
+    style A1 fill:#fff3e0,stroke:#fb8c00
+    style A2 fill:#fff3e0,stroke:#fb8c00
 ```
 
----
+**Search Bar**: Find anything instantly.
 
-## The Dataset Page
+**Favorites**: Quick access to starred assets.
 
-Click any dataset to see its full profile:
+**Recently Viewed**: Jump back to what you were looking at.
 
+**Needs Attention**: Action items that need you.
+
+## Search
+
+Click the search bar or press `/` to search:
 ```mermaid
-graph TD
-    subgraph Header
-        Title["📊 <b>analytics.customer_orders</b><br/>❄️ Snowflake | 👤 Analytics Team | ⭐ 42 stars"]
-        Tags["🏷️ production | 🏷️ golden | 🏷️ revenue-metrics"]
-    end
-
-    subgraph "Schema Preview"
-        direction TB
-        C1["order_id (STRING)"]
-        C2["customer_id (STRING)"]
-        C3["order_date (TIMESTAMP)"]
-        C4["total_amount (DECIMAL) | 📖 Order Total"]
-    end
-
-    Header --- Preview
+flowchart LR
+    S["Search:<br/>customer orders"]
     
-    style Title fill:#e3f2fd,stroke:#1565c0,stroke-width:2px
-    style Tags fill:#f1f8e9,stroke:#558b2f
+    subgraph RESULTS[Results]
+        Q1["analytics.customer_orders<br/><small>Snowflake</small>"]
+        Q2["stg_customer_orders<br/><small>dbt</small>"]
+        Q3["Orders Dashboard<br/><small>Tableau</small>"]
+    end
+
+    subgraph FILTERS[Filters]
+        F1[Snowflake]
+        F2[production]
+        F3[Customer Metrics]
+    end
+
+    S --> RESULTS
+    RESULTS ~~~ FILTERS
+
+    style S fill:#e3f2fd,stroke:#1976d2,stroke-width:3px
+    style RESULTS fill:#fafafa,stroke:#e0e0e0
+    style FILTERS fill:#f3e5f5,stroke:#7b1fa2
 ```
 
-### Tabs Explained
+Full results page:
+```mermaid
+flowchart LR
+    subgraph F[Filters]
+        F1[Dataset]
+        F2[Snowflake]
+        F3[production]
+    end
 
-| Tab | What You'll Find |
-|-----|------------------|
-| **Schema** | Columns, types, descriptions, and tags |
+    subgraph R[Results]
+        R1["<b>analytics.customer_orders</b><br/><small>Snowflake · 25 cols</small>"]
+        R2["stg_customer_orders<br/><small>dbt · 12 cols</small>"]
+    end
+
+    F ~~~ R
+
+    style F fill:#fafafa,stroke:#e0e0e0
+    style R fill:#fff,stroke:#e0e0e0
+    style R1 fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+```
+
+## Dataset page
+
+Click any dataset to see its profile:
+```mermaid
+flowchart TB
+    Title["<b>analytics.customer_orders</b><br/><small>Snowflake · Analytics Team · 42 stars</small>"]
+    Tags["production · golden · revenue-metrics"]
+    
+    subgraph COLS[Columns]
+        direction LR
+        C1["order_id<br/><small>STRING</small>"]
+        C2["customer_id<br/><small>STRING</small>"]
+        C3["order_date<br/><small>TIMESTAMP</small>"]
+        C4["total_amount<br/><small>DECIMAL</small>"]
+    end
+
+    Title ~~~ Tags
+    Tags ~~~ COLS
+
+    style Title fill:#e3f2fd,stroke:#1976d2,stroke-width:3px
+    style Tags fill:#e8f5e9,stroke:#43a047
+    style COLS fill:#fafafa,stroke:#e0e0e0
+```
+
+### Tabs
+
+| Tab | What's There |
+|-----|--------------|
+| **Schema** | Columns, types, descriptions, tags |
 | **Lineage** | Visual graph of data flow |
-| **Documentation** | Long-form documentation (markdown supported) |
-| **Quality** | Assertions, freshness, and health status |
-| **Queries** | Sample queries and usage statistics |
+| **Documentation** | Long-form docs (markdown supported) |
+| **Quality** | Assertions, freshness, health status |
+| **Queries** | Sample queries and usage stats |
 | **History** | Changelog and audit trail |
-| **Settings** | Advanced configuration |
+| **Settings** | Advanced config |
 
----
+## Lineage view
 
-## The Lineage View
-
-The most powerful visualization in DataHub:
-
+Most useful visualization:
 ```mermaid
-graph LR
-    subgraph Upstream
-        A[raw_orders] --> B[stg_orders]
-        C[raw_customers] --> D[stg_customers]
-    end
+flowchart LR
+    A[(raw_orders)] --> B[(stg_orders)]
+    C[(raw_customers)] --> D[(stg_customers)]
+    
+    B --> E[[<b>customer_orders</b>]]
+    D --> E
+    
+    E --> F{{Revenue Dashboard}}
 
-    subgraph Current
-        B --> E("<b>customer_orders</b><br/>YOU ARE HERE")
-        D --> E
-    end
-
-    subgraph Downstream
-        E --> F[Revenue Dashboard]
-    end
-
-    style E fill:#ffecb3,stroke:#ff8f00,stroke-width:4px
-    style F fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    style E fill:#fff3e0,stroke:#fb8c00,stroke-width:3px
+    style F fill:#e3f2fd,stroke:#1976d2
 ```
 
-### Lineage Controls
+### Controls
 
 | Control | What It Does |
 |---------|--------------|
@@ -184,94 +156,69 @@ graph LR
 | **Entity Type** | Filter by datasets, dashboards, etc. |
 | **Column Level** | Switch to column-level lineage |
 
----
+## Governance center
 
-## Governance Center
-
-Manage classifications, terms, and domains from a central location:
-
+Manage classifications, terms, and domains:
 ```mermaid
-graph TD
-    subgraph "Governance Overview"
-        direction LR
-        G1["📖 <b>Glossary</b><br/>156 terms"]
-        G2["🏷️ <b>Tags</b><br/>42 tags"]
-        G3["🏢 <b>Domains</b><br/>8 domains"]
+flowchart LR
+    subgraph STATS[Overview]
+        G1["Glossary<br/>156 terms"]
+        G2["Tags<br/>42 tags"]
+        G3["Domains<br/>8 domains"]
     end
 
-    subgraph "Business Glossary Preview"
-        direction TB
-        T1["📂 <b>Revenue Metrics</b>"]
-        T1.1["ARR (Annual Recurring Revenue)"]
-        T1.2["MRR (Monthly Recurring Revenue)"]
-        
-        T2["📂 <b>Customer Metrics</b>"]
-        T2.1["Customer Lifetime Value"]
-        T2.2["Churn Rate"]
+    subgraph TERMS[Example Terms]
+        T1["ARR<br/><small>Annual Recurring Revenue</small>"]
+        T2["MRR<br/><small>Monthly Recurring Revenue</small>"]
+        T3["LTV<br/><small>Customer Lifetime Value</small>"]
     end
 
-    Governance --- Glossary
-    
-    style G1 fill:#e3f2fd,stroke:#1565c0
-    style G2 fill:#f1f8e9,stroke:#558b2f
-    style G3 fill:#fff3e0,stroke:#ef6c00
+    STATS ~~~ TERMS
+
+    style STATS fill:#fafafa,stroke:#e0e0e0
+    style G1 fill:#e3f2fd,stroke:#1976d2
+    style G2 fill:#e8f5e9,stroke:#43a047
+    style G3 fill:#fff3e0,stroke:#fb8c00
+    style TERMS fill:#fafafa,stroke:#e0e0e0
 ```
 
----
+## Ingestion center
 
-## Ingestion Center
-
-Manage all your data source connections and monitor their status:
-
+Manage data source connections and check their status:
 ```mermaid
-graph TD
-    S1["Production DW | ❄️ Snowflake | ✅ Pass | 2h ago"]
-    S2["Analytics dbt | 🏗️ dbt | ✅ Pass | 2h ago"]
-    S3["Dashboards | 📊 Tableau | ⚠️ Warn | 6h ago"]
-    S4["Event Stream | 📡 Kafka | ✅ Pass | 30m ago"]
-
-    subgraph "Ingestion Summary"
-        Total["Total: 5 | Healthy: 3 | Warning: 1 | Failed: 1"]
+flowchart LR
+    subgraph SOURCES[Sources]
+        S1["Production DW<br/><small>Snowflake · 2h ago</small>"]
+        S2["Analytics dbt<br/><small>dbt · 2h ago</small>"]
+        S3["Dashboards<br/><small>Tableau · 6h ago</small>"]
     end
 
-    S1 --- Total
-    S2 --- Total
-    S3 --- Total
-    S4 --- Total
+    SUMMARY["Total: 5<br/>Healthy: 3 · Warning: 1"]
 
-    style S1 stroke:#2e7d32
-    style S2 stroke:#2e7d32
-    style S3 stroke:#ef6c00
-    style S4 stroke:#2e7d32
-    style Total fill:#e3f2fd,stroke:#1565c0
+    SOURCES --> SUMMARY
+
+    style SOURCES fill:#fafafa,stroke:#e0e0e0
+    style S1 fill:#e8f5e9,stroke:#43a047
+    style S2 fill:#e8f5e9,stroke:#43a047
+    style S3 fill:#fff3e0,stroke:#fb8c00
+    style SUMMARY fill:#e3f2fd,stroke:#1976d2
 ```
 
-### Source Details
-
-Click any source to see details:
-
+Click any source for details:
 ```mermaid
-graph TD
-    subgraph "Source: Production DW (Snowflake)"
-        direction TB
-        Status["Status: ✅ Healthy"]
-        Schedule["Schedule: Every 6 hours"]
-        
-        subgraph "Last Run Summary"
-            Assets["Assets Ingested: 1,247 datasets | 45,892 columns | 892 edges"]
-            Time["Duration: 15m 32s"]
-        end
-    end
+flowchart LR
+    Status["Status: Healthy"]
+    Schedule["Schedule:<br/>Every 6 hours"]
+    Stats["1,247 datasets<br/>45,892 columns<br/>15m 32s"]
 
-    style Status fill:#e8f5e9,stroke:#2e7d32
-    style Assets fill:#f9f9f9
+    Status ~~~ Schedule ~~~ Stats
+
+    style Status fill:#e8f5e9,stroke:#43a047
+    style Schedule fill:#e3f2fd,stroke:#1976d2
+    style Stats fill:#fafafa,stroke:#e0e0e0
 ```
 
----
-
-## Keyboard Shortcuts
-
-Speed up your workflow:
+## Keyboard shortcuts
 
 | Shortcut | Action |
 |----------|--------|
@@ -282,78 +229,45 @@ Speed up your workflow:
 | `g` then `g` | Go to glossary |
 | `?` | Show all shortcuts |
 
----
+## Dark mode
 
-## Dark Mode
+Click your profile avatar (top right) → Toggle "Dark Mode". Switches immediately.
 
-DataHub supports dark mode for a better viewing experience in low-light environments:
+## Mobile
 
-1. Click your **profile avatar** (top right)
-2. Toggle **"Dark Mode"**
-3. The interface will switch to the dark theme immediately.
+Works on phones. You can search, browse datasets, view lineage (simplified), approve access requests, and get notifications. Complex editing is better on desktop though.
 
----
+## Customization
 
-## Mobile Experience
+**Personal**:
+- Home page widgets - drag and arrange
+- Default filters - set remembered search filters
+- Notification preferences - choose what alerts you
+- Starred assets - pin important datasets
 
-DataHub is responsive! Access from your phone:
-
-- ✅ Search and browse datasets
-- ✅ View lineage (simplified view)
-- ✅ Approve access requests
-- ✅ Get notifications
-- ⚠️ Complex editing works better on desktop
-
----
-
-## Customizing Your Experience
-
-### Personalization Options
-
-1. **Home Page Widgets** - Drag and arrange widgets
-2. **Default Filters** - Set remembered search filters
-3. **Notification Preferences** - Choose what alerts you
-4. **Starred Assets** - Pin important datasets
-
-### Team Settings
-
-Admins can customize:
+**Team settings** (admins):
 - Company logo
 - Color theme
 - Default domain views
 - Welcome messages
 
----
+## Tips
 
-## Pro Tips
+**Browser extension**: Install the DataHub extension to see metadata when viewing queries in your SQL client.
 
-### 🎯 Tip 1: Use the Browser Extension
+**Bookmark with context**: When you share a DataHub link, it preserves your current view (tab, lineage depth, filters).
 
-Install the DataHub browser extension to see metadata when viewing queries in your SQL client.
+**Quick copy**: `Ctrl+C` / `Cmd+C` on any asset copies its URN to clipboard. Useful for API calls.
 
-### 🎯 Tip 2: Bookmark with Context
+**Fullscreen lineage**: Press `F` when viewing lineage to go fullscreen. Good for presentations.
 
-When you share a DataHub link, it preserves your current view (tab, lineage depth, filters).
-
-### 🎯 Tip 3: Quick Copy
-
-`Ctrl+C` / `Cmd+C` on any asset copies its URN to clipboard — useful for API calls.
-
-### 🎯 Tip 4: Fullscreen Lineage
-
-Press `F` when viewing lineage to go fullscreen — great for presentations.
-
----
-
-## You're Ready!
-
-You now know your way around DataHub. Time to put it to use:
+## What's next
 
 <div className="row">
   <div className="col col--6">
     <div className="card margin-bottom--lg">
       <div className="card__header">
-        <h3>📥 Start Ingesting</h3>
+        <h3>Start Ingesting</h3>
       </div>
       <div className="card__body">
         <p>Connect your first data source.</p>
@@ -366,10 +280,10 @@ You now know your way around DataHub. Time to put it to use:
   <div className="col col--6">
     <div className="card margin-bottom--lg">
       <div className="card__header">
-        <h3>🔍 Search Your Data</h3>
+        <h3>Search Your Data</h3>
       </div>
       <div className="card__body">
-        <p>Find datasets using powerful search.</p>
+        <p>Find datasets using search.</p>
       </div>
       <div className="card__footer">
         <a className="button button--primary button--block" href="/docs/tutorial-basics/search-discovery">Master Search →</a>
